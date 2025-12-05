@@ -34,3 +34,11 @@ struct Delivery
     float litersDelivered;
     float deliveryCost;
 };
+
+// Stores information about payment methods
+struct Payment
+{
+    std::string paymentMethod;
+    std::string date;
+    float ammount;
+};
