@@ -4,8 +4,8 @@
 struct Fuel 
 {
     std::string name;
-    float price;
-    float liters;
+    double price;
+    double liters;
 };
 
 // Stores the information about purchased fuel
@@ -13,8 +13,9 @@ struct Sale
 {
     std::string fuel;
     std::string date;
-    float liters;
-    float price;
+    int saleId;
+    double liters;
+    double price;
 };
 
 // Stores the information about employees
@@ -31,8 +32,8 @@ struct Delivery
 {
     std::string fuel;
     std::string date;
-    float litersDelivered;
-    float deliveryCost;
+    double litersDelivered;
+    double deliveryCost;
 };
 
 // Stores information about payment methods
@@ -40,5 +41,13 @@ struct Payment
 {
     std::string paymentMethod;
     std::string date;
-    float ammount;
+    double amount;
+};
+
+// Stores information about the pump
+struct Pump
+{
+    int pumpNum;
+    std::string fuelType;
+    double dispensedLiters;
 };
