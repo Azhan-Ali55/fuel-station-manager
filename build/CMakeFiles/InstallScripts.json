@@ -1,7 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"C:/Repos/fuel-station-manager/build/cmake_install.cmake"
-	],
-	"Parallel" : false
-}

@@ -1,3 +1,0 @@
-C:/Repos/fuel-station-manager/build/CMakeFiles/main.dir
-C:/Repos/fuel-station-manager/build/CMakeFiles/edit_cache.dir
-C:/Repos/fuel-station-manager/build/CMakeFiles/rebuild_cache.dir

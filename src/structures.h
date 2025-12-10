@@ -1,5 +1,4 @@
-#ifndef STRUCTURES_H
-#define STRUCTURES_H
+#pragma once
 
 #include <string>
 
@@ -50,9 +49,7 @@ struct Payment
 // Stores information about the pump
 struct Pump
 {
-    int pumpNum;
+    int pumpID;
     std::string fuelType;
     double dispensedLiters;
 };
-
-#endif
