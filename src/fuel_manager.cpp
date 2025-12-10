@@ -1,4 +1,5 @@
-#include "fuel_manager.h";
+#include "fuel_manager.h"
+#include "structures.h"
 #include <iostream>
 #include <vector>
 

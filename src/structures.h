@@ -1,3 +1,6 @@
+#ifndef STRUCTURES_H
+#define STRUCTURES_H
+
 #include <string>
 
 // Stores the fuel name, price, and quantity
@@ -51,3 +54,5 @@ struct Pump
     std::string fuelType;
     double dispensedLiters;
 };
+
+#endif
