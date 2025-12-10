@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "CMakeFiles\\main.dir\\src\\fuel_manager.cpp.obj",
+            "outputs": [
+                "C:\\Repos\\fuel-station-manager\\build\\vc140.pdb",
+                "CMakeFiles\\main.dir\\src\\fuel_manager.cpp.obj.ddi"
+            ],
+            "requires": []
+        }
+    ]
+}
