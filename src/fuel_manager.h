@@ -9,3 +9,6 @@ void addPump(std::vector<Pump>& pumps);
 
 // Function to add fuel
 bool addFuel(std::vector<Fuel>& fuels, const std::vector<Pump>& pumps);
+
+// Function for login roles
+bool login(Employee &loggedUser, const std::vector<Employee>& employee);
