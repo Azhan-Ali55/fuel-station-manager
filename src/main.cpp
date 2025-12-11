@@ -3,6 +3,7 @@
 #include <vector>
 #include <chrono>
 #include <thread>
+#include <iomanip>
 
 
 int main()
@@ -19,6 +20,8 @@ int main()
 		{"Ali", "ali123", "man1", "Manager"},
 		{"Andrew", "andrew123", "own1", "Owner"}
 	};
+	// Declaring the revenue variable
+	double revenue = 0;
 	int choice;
 	Employee loggedId;
 	while (true)
@@ -28,7 +31,7 @@ int main()
 			if (login(loggedId, emp))
 				break;
 		}
-		std::cout << "Enter your choice: \n1) Add Pump\n2) Add Fuel\n3)Exit\n";
+		std::cout << "Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Exit\n";
 		std::cin >> choice;
 		switch (choice)
 		{
@@ -44,7 +47,10 @@ int main()
 				std::cout << "The fuel was added succesfully!\n";
 				continue;
 			}
-		case 3:
+		case 3: 
+			makeSale(revenue);
+			continue;
+		case 4:
 			std::cout << "Exiting.....";
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 			return 0;
@@ -97,7 +103,7 @@ bool addFuel(std::vector<Fuel>& fuels, const std::vector<Pump>& pumps)
 }
 
 // Function defination for login roles
-bool login(Employee &loggedUser, const std::vector<Employee>& employee)
+bool login(Employee& loggedUser, const std::vector<Employee>& employee)
 {
 	// Declaring variables for username and password
 	std::string userName;
@@ -131,5 +137,28 @@ bool login(Employee &loggedUser, const std::vector<Employee>& employee)
 	}
 	std::cout << "Incorrect username! Try Again\n";
 	return false;
+}
+
+// Function defination for making sale
+void makeSale(double &rev)
+{
+	Sale sales; // Making object for Sale struct 
+	std::cout << "Enter the fuel: ";
+	std::cin >> sales.fuel;
+	std::cout << "Enter the liters: ";
+	std::cin >> sales.liters;
+	std::cout << "Enter the price per liter: ";
+	std::cin >> sales.price;
+	std::cout << "Enter the date: ";
+	std::cin >> sales.date;
+	rev = sales.price * sales.liters;
+	// Generating the reciept
+	std::cout << "===============================================\n";
+	std::cout << "                     RECIEPT                   \n";
+	std::cout << "===============================================\n";
+	std::cout << "Fuel: " << std::setw(3) << sales.fuel << '\n';
+	std::cout << "Liters Sold: " << std::setw(3) << sales.liters << '\n';
+	std::cout << "Total price: " << std::setw(3) << rev << '\n';
+	std::cout << "Date: " << sales.date << '\n';
 }
 
