@@ -13,7 +13,7 @@ int main()
 	// Declaring a vector for storing pumps
 	std::vector<Pump> pumps;
 	// Declaring a vector for storing employee's information
-	std::vector<Employee> emp =
+	std::vector<Employee> employees =
 	{
 		{"Alex", "alex123", "emp1", "Fueler"},
 		{"Umer", "umer123", "emp2", "Fueler"},
@@ -28,7 +28,7 @@ int main()
 	{
 		while (true)
 		{
-			if (login(loggedId, emp))
+			if (login(loggedId, employees))
 				break;
 		}
 		std::cout << "Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Exit\n";
@@ -72,13 +72,13 @@ void addPump(std::vector<Pump>& pumps)
 		return;
 	}
 
-	Pump newPump; // Creating the object of the Pump struct
+	Pump p; // Creating the object of the Pump struct
 	std::cout << "Enter the ID of the pump: ";
-	std::cin >> newPump.pumpID;
+	std::cin >> p.pumpID;
 	std::cout << "Enter the fuel type of the pump: ";
-	std::cin >> newPump.fuelType;
+	std::cin >> p.fuelType;
 	std::cin.ignore(); // Clear the input buffer
-	pumps.push_back(newPump); // Adds a new pump to the vector 
+	pumps.push_back(p); // Adds a new pump to the vector 
 }
 
 // Function defination for adding fuel
@@ -90,15 +90,15 @@ bool addFuel(std::vector<Fuel>& fuels, const std::vector<Pump>& pumps)
 		std::cout << "No pumps have been installed. Install the pumps first to add fuel\n";
 		return false;
 	}
-	Fuel newFuel; // Creating the object of the Fuel strcut
+	Fuel f; // Creating the object of the Fuel strcut
 	std::cout << "Enter fuel name: ";
-	std::cin >> newFuel.name;
+	std::cin >> f.name;
 	std::cout << "Enter fuel price per liter: ";
-	std::cin >> newFuel.price;
+	std::cin >> f.price;
 	std::cout << "Enter the amount of liters: ";
-	std::cin >> newFuel.liters;
+	std::cin >> f.liters;
 	std::cin.ignore(); // Clear the input buffer
-	fuels.push_back(newFuel); // Adds a new fuel to the vector 
+	fuels.push_back(f); // Adds a new fuel to the vector 
 	return true;
 }
 
@@ -113,19 +113,19 @@ bool login(Employee& loggedUser, const std::vector<Employee>& employee)
 	// Applying loop to check for username and password
 	for (int i = 0; i < employee.size(); i++)
 	{
-		Employee emp = employee[i]; // Assigning the copy of vector to emp
+		Employee e = employee[i]; // Assigning the copy of vector to emp
 		// Apply conditions to check for correct username
-		if (emp.username == userName)
+		if (e.username == userName)
 		{
 			// Ask password if the username is correct
 			std::cout << "Enter password: ";
 			std::cin >> pass;
 			// Check if password is correct
-			if (emp.password == pass)
+			if (e.password == pass)
 			{
-				loggedUser = emp;
+				loggedUser = e;
 				std::this_thread::sleep_for(std::chrono::seconds(2));
-				std::cout << "\nWelcome " << emp.name << '\n';
+				std::cout << "\nWelcome " << e.name << '\n';
 				return true;
 			}
 			else
@@ -142,23 +142,23 @@ bool login(Employee& loggedUser, const std::vector<Employee>& employee)
 // Function defination for making sale
 void makeSale(double &rev)
 {
-	Sale sales; // Making object for Sale struct 
+	Sale s; // Making object for Sale struct 
 	std::cout << "Enter the fuel: ";
-	std::cin >> sales.fuel;
+	std::cin >> s.fuel;
 	std::cout << "Enter the liters: ";
-	std::cin >> sales.liters;
+	std::cin >> s.liters;
 	std::cout << "Enter the price per liter: ";
-	std::cin >> sales.price;
+	std::cin >> s.price;
 	std::cout << "Enter the date: ";
-	std::cin >> sales.date;
-	rev = sales.price * sales.liters;
+	std::cin >> s.date;
+	rev = s.price * s.liters;
 	// Generating the reciept
 	std::cout << "===============================================\n";
 	std::cout << "                     RECIEPT                   \n";
 	std::cout << "===============================================\n";
-	std::cout << "Fuel: " << std::setw(3) << sales.fuel << '\n';
-	std::cout << "Liters Sold: " << std::setw(3) << sales.liters << '\n';
+	std::cout << "Fuel: " << std::setw(3) << s.fuel << '\n';
+	std::cout << "Liters Sold: " << std::setw(3) << s.liters << '\n';
 	std::cout << "Total price: " << std::setw(3) << rev << '\n';
-	std::cout << "Date: " << sales.date << '\n';
+	std::cout << "Date: " << s.date << '\n';
 }
 
