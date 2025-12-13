@@ -4,6 +4,8 @@
 #include <string>
 #include <vector> 
 
+// Function Prototypes
+
 // Function to add pumps
 void addPump(std::vector<Pump>& pumps);
 
@@ -15,3 +17,6 @@ bool login(Employee &loggedUser, const std::vector<Employee>& employee);
 
 // Function to make sales
 void makeSale(double &rev);
+
+// Function to run the program on loop
+void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Fuel>& fuels, double& revenue);

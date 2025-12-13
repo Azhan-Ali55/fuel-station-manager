@@ -22,13 +22,21 @@ int main()
 	};
 	// Declaring the revenue variable
 	double revenue = 0;
+	// Running the program 
+	runProgram(employees, pumps, fuels, revenue);
+	return 0;
+}
+
+// Function defination for running the program
+void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Fuel>& fuels, double& revenue)
+{
 	int choice;
-	Employee loggedId;
+	Employee loggedUser;
 	while (true)
 	{
 		while (true)
 		{
-			if (login(loggedId, employees))
+			if (login(loggedUser, employees))
 				break;
 		}
 		std::cout << "Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Exit\n";
@@ -53,13 +61,12 @@ int main()
 		case 4:
 			std::cout << "Exiting.....";
 			std::this_thread::sleep_for(std::chrono::seconds(1));
-			return 0;
+			return;
 		default:
 			std::cout << "Invalid Input!\n";
 			continue;
 		}
 	}
-	return 0;
 }
 
 // Function defination for adding pumps
