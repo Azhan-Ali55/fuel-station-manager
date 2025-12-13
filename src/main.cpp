@@ -53,8 +53,8 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 			{
 				std::this_thread::sleep_for(std::chrono::seconds(3));
 				std::cout << "The fuel was added succesfully!\n";
-				continue;
 			}
+			continue;
 		case 3: 
 			makeSale(revenue);
 			continue;
@@ -97,6 +97,32 @@ bool addFuel(std::vector<Fuel>& fuels, const std::vector<Pump>& pumps)
 		std::cout << "No pumps have been installed. Install the pumps first to add fuel\n";
 		return false;
 	}
+
+	// Asking the user for which pump they want to add the fuel to 
+	int pumId;
+	std::cout << "Enter the ID of the pump: ";
+	std::cin >> pumId;
+	
+	// Now check if the pump ID is correct or not 
+	for (int i = 0; i < pumps.size(); i++)
+	{
+		bool pumpFound = false; // Initializing the local variable to false
+		
+		// Check using if condition
+		if (pumId == pumps[i].pumpID)
+		{
+			pumpFound = true;
+			break;
+		}
+
+		// If no pump is found then print the invalid message
+		if (!pumpFound)
+		{
+			std::cout << "Invalid pump ID! Try Again";
+			return false;
+		}
+	}
+
 	Fuel f; // Creating the object of the Fuel strcut
 	std::cout << "Enter fuel name: ";
 	std::cin >> f.name;
@@ -117,22 +143,22 @@ bool login(Employee& loggedUser, const std::vector<Employee>& employee)
 	std::string pass;
 	std::cout << "Enter username: ";
 	std::cin >> userName;
+	
 	// Applying loop to check for username and password
 	for (int i = 0; i < employee.size(); i++)
 	{
-		Employee e = employee[i]; // Assigning the copy of vector to emp
 		// Apply conditions to check for correct username
-		if (e.username == userName)
+		if (employee[i].username == userName)
 		{
 			// Ask password if the username is correct
 			std::cout << "Enter password: ";
 			std::cin >> pass;
 			// Check if password is correct
-			if (e.password == pass)
+			if (employee[i].password == pass)
 			{
-				loggedUser = e;
+				loggedUser = employee[i];
 				std::this_thread::sleep_for(std::chrono::seconds(2));
-				std::cout << "\nWelcome " << e.name << '\n';
+				std::cout << "\nWelcome " << employee[i].name << '\n';
 				return true;
 			}
 			else
@@ -159,6 +185,7 @@ void makeSale(double &rev)
 	std::cout << "Enter the date: ";
 	std::cin >> s.date;
 	rev = s.price * s.liters;
+	
 	// Generating the reciept
 	std::cout << "===============================================\n";
 	std::cout << "                     RECIEPT                   \n";
