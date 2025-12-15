@@ -22,16 +22,16 @@ void makeSale(std::vector<Sale>& sales);
 void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Fuel>& fuels, double& revenue);
 
 // Function to calculate daily revenue 
-void dailyRev(const std::vector<Sales>& sales, const std::string& date);
+double dailyRev(const std::vector<Sales>& sales, const std::string& date);
 
 // Function to calculate monthly revenue
-void monthlyRev(const std::vector<Sale>& sales, int month, int year);
+double monthlyRev(const std::vector<Sale>& sales, int month, int year);
 
 // Function to calculate yearly revenue
-void yearlyRev(const std::vector<Sale>& sales, int year);
+double yearlyRev(const std::vector<Sale>& sales, int year);
 
 // Function to calculate all time revenue
-void allRev(const std::string<Sale>& sales);
+double allRev(const std::string<Sale>& sales);
 
 // Function to show the revenue menu
 void revMenu(const std::vector<Sale>& sales);
