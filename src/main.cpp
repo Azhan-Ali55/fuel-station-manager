@@ -173,7 +173,7 @@ bool login(Employee& loggedUser, const std::vector<Employee>& employee)
 }
 
 // Function defination for making sale
-void makeSale(double &rev)
+void makeSale(std::vector<Sale>& sales)
 {
 	Sale s; // Making object for Sale struct 
 	std::cout << "Enter the fuel: ";
@@ -184,7 +184,8 @@ void makeSale(double &rev)
 	std::cin >> s.price;
 	std::cout << "Enter the date: ";
 	std::cin >> s.date;
-	rev = s.price * s.liters;
+	s.totalAmmount = s.price * s.liters;
+	sales.push_back(s);  // Stores the sale and creates new storage location in the vector
 	
 	// Generating the reciept
 	std::cout << "===============================================\n";
@@ -192,7 +193,7 @@ void makeSale(double &rev)
 	std::cout << "===============================================\n";
 	std::cout << "Fuel: " << std::setw(3) << s.fuel << '\n';
 	std::cout << "Liters Sold: " << std::setw(3) << s.liters << '\n';
-	std::cout << "Total price: " << std::setw(3) << rev << '\n';
+	std::cout << "Total price: " << std::setw(3) << s.totalAmmount << '\n';
 	std::cout << "Date: " << s.date << '\n';
 }
 
