@@ -18,6 +18,7 @@ struct Sale
     int saleId;
     double liters;
     double price;
+    double totalAmount;
 };
 
 // Stores the information about employees

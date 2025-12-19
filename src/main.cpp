@@ -12,6 +12,8 @@ int main()
 	std::vector<Fuel> fuels;
 	// Declaring a vector for storing pumps
 	std::vector<Pump> pumps;
+	// Declaring a vector for storing information about sale
+	std::vector<Sale> sales;
 	// Declaring a vector for storing employee's information
 	std::vector<Employee> employees =
 	{
@@ -23,12 +25,12 @@ int main()
 	// Declaring the revenue variable
 	double revenue = 0;
 	// Running the program 
-	runProgram(employees, pumps, fuels, revenue);
+	runProgram(employees, pumps, fuels, sales, revenue);
 	return 0;
 }
 
 // Function defination for running the program
-void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Fuel>& fuels, double& revenue)
+void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Fuel>& fuels,std::vector<Sale>& sales, double& revenue)
 {
 	int choice;
 	Employee loggedUser;
@@ -39,7 +41,8 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 			if (login(loggedUser, employees))
 				break;
 		}
-		std::cout << "Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Exit\n";
+		//std::cout << "Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Exit\n";
+	    animateTxt("Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Exit\n");
 		std::cin >> choice;
 		switch (choice)
 		{
@@ -56,7 +59,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 			}
 			continue;
 		case 3: 
-			makeSale(revenue);
+			makeSale(sales);
 			continue;
 		case 4:
 			std::cout << "Exiting.....";
@@ -173,7 +176,7 @@ bool login(Employee& loggedUser, const std::vector<Employee>& employee)
 }
 
 // Function defination for making sale
-void makeSale(double &rev)
+void makeSale(std::vector<Sale>& sales)
 {
 	Sale s; // Making object for Sale struct 
 	std::cout << "Enter the fuel: ";
@@ -184,7 +187,8 @@ void makeSale(double &rev)
 	std::cin >> s.price;
 	std::cout << "Enter the date: ";
 	std::cin >> s.date;
-	rev = s.price * s.liters;
+	s.totalAmount = s.price * s.liters;
+	sales.push_back(s);  // Stores the sale and creates new storage location in the vector
 	
 	// Generating the reciept
 	std::cout << "===============================================\n";
@@ -192,7 +196,18 @@ void makeSale(double &rev)
 	std::cout << "===============================================\n";
 	std::cout << "Fuel: " << std::setw(3) << s.fuel << '\n';
 	std::cout << "Liters Sold: " << std::setw(3) << s.liters << '\n';
-	std::cout << "Total price: " << std::setw(3) << rev << '\n';
+	std::cout << "Total price: " << std::setw(3) << s.totalAmount << '\n';
 	std::cout << "Date: " << s.date << '\n';
 }
 
+// Function  defination for animating text
+void animateTxt(std::string text)
+{
+	for (int i = 0; i < text.size(); i++)
+	{
+		char c = text[i]; // Strong one chracter from the text 
+		std::cout << c << std::flush;
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
+	std::cout << std::endl;
+}
