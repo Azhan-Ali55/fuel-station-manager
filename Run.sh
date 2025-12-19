@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# variables
+# Variables
 
 # Color codes
 GREEN='\033[0;32m'
@@ -11,14 +11,14 @@ PURPLE='\033[0;35m'
 RESET='\033[0m' # No Color
 readonly GREEN RED YELLOW CYAN PURPLE RESET
 
-# variables end
+# Variables end
 
-# parsing arguments
+# Parsing arguments
 build_type="Debug"
 if [[ "$1" == "--release" ]]; then
     build_type="Release"
 fi
-# parsing arguments end
+# Parsing arguments end
 
 clear
 clear
@@ -42,9 +42,9 @@ end=$(date +%s.%N)
 elapsed=$(awk -v e="$end" -v s="$start" 'BEGIN { printf "%.9f", e - s }')
 
 if awk -v e="$elapsed" 'BEGIN { exit !(e <= 1) }'; then
-    # less than 1 sec
+    # Less than 1 sec
     printf "${PURPLE}Elapsed Time: %.3f milliseconds${NC}\n" "$(awk -v t="$elapsed" 'BEGIN { printf "%.3f", t * 1000 }')"
 else
-    # less than 1 sec
+    # Less than 1 sec
     printf "${PURPLE}Elapsed Time: %.3f seconds${RESET}\n" "$elapsed"
 fi
