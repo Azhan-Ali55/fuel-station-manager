@@ -263,3 +263,39 @@ void showDeliveries(const std::vector<Delivery>& deliveries)
         std::cout << "Cost: " << deliveries[i].deliveryCost << '\n';
     }
 }
+// Function to add a new payment
+void addPayment(std::vector<Payment>& payments)
+{
+    Payment p;
+    std::cout<<"\n----------------------\n";
+    std::cout<<"Give Payment Details\n";
+    std::cout<<"----------------------\n";
+    std::cout << "Enter payment method: ";
+    std::cin >> p.paymentMethod;
+    std::cout << "Enter payment date: ";
+    std::cin >> p.date;
+    std::cout << "Enter amount: ";
+    std::cin >> p.amount;
+    payments.push_back(p);
+    std::cout << "Payment recorded successfully!\n";
+}
+// Function to show all payments
+void showPayments(const std::vector<Payment>& payments)
+{
+    if (payments.size() == 0)
+    {
+        std::cout << "No payments recorded yet.\n";
+        return;
+    }
+    for (int i = 0; i < payments.size(); i++)
+    {
+        std::cout<<"\n=====================\n";
+        std::cout << "Payment Receipt!\n";
+        std::cout<<"=====================\n";
+        std::cout << "Payment " << i + 1 << '\n';
+        std::cout << "Method: " << payments[i].paymentMethod << '\n';
+        std::cout << "Date: " << payments[i].date << '\n';
+        std::cout << "Amount: " << payments[i].amount << '\n';
+    }
+}
+
