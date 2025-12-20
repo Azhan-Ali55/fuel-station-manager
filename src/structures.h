@@ -53,3 +53,11 @@ struct Pump
     std::string fuelType;
     double dispensedLiters;
 };
+
+// Stores information about the expenses
+struct Expense 
+{
+    std::string type;
+    std::string date; 
+    double amount;
+};

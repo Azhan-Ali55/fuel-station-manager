@@ -33,6 +33,8 @@ int main()
 
 	// Loading sales from the file 
 	loadSalesFromFile(sales);
+	// Loading deliveries from the file
+	loadDeliveriesFromFile(deliveries);
 
 	// Declaring the revenue variable
 	double revenue = 0;

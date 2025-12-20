@@ -24,3 +24,12 @@ void saveRevenueToFile(double revenue, const std::string& type, const std::strin
 
 // Function to load the revenue from the file 
 double loadRevenueFromFile(const std::string& type, const std::string& identifier = "");
+
+// For Deliveries
+
+// Function to save deliveries to file
+void saveDeliveryToFile(const Delivery& d);
+
+// Function to load deliveries from the file
+void loadDeliveriesFromFile(std::vector<Delivery>& deliveries);
+

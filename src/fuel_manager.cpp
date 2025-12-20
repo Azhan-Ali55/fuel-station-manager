@@ -373,6 +373,9 @@ void addDelivery(std::vector<Delivery>& deliveries)
 	std::cout << "Enter delivery cost: ";
 	std::cin >> d.deliveryCost;
 	deliveries.push_back(d);
+
+	// Saving delivery to file
+	saveDeliveryToFile(d);
 	std::cout << "Delivery added successfully!\n";
 }
 

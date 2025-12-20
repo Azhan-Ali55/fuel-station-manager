@@ -27,20 +27,20 @@ void makeSale(std::vector<Sale>& sales);
 // Function to run the program on loop
 void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Fuel>& fuels, std::vector<Sale>& sales, std::vector<Delivery>& deliveries);
 
- // Function to calculate daily revenue 
- double dailyRevenue(const std::string& date);
+// Function to calculate daily revenue 
+double dailyRevenue(const std::string& date);
 
- // Function to calculate monthly revenue
- double monthlyRevenue(int month, int year);
+// Function to calculate monthly revenue
+double monthlyRevenue(int month, int year);
 
- // Function to calculate yearly revenue
- double yearlyRevenue(int year);
+// Function to calculate yearly revenue
+double yearlyRevenue(int year);
 
- // Function to calculate all time revenue
- double allRevenue();
+// Function to calculate all time revenue
+double allRevenue();
 
- // Function to show the revenue menu
- void revenueMenu(const std::vector<Sale>& sales);
+// Function to show the revenue menu
+void revenueMenu(const std::vector<Sale>& sales);
 
 // Function to add a new delivery
 void addDelivery(std::vector<Delivery>& deliveries);
