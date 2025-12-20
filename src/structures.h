@@ -14,7 +14,6 @@ struct Fuel
 struct Payment
 {
     std::string method;
-    double amount;
 };
 
 // Stores the information about purchased fuel

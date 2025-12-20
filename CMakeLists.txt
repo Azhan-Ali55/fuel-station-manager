@@ -43,7 +43,7 @@ endforeach()
 add_executable(
     main
     ${FILES}
- )
+  "src/fuel_manager.cpp")
 
 # inlcude all directories
 # suppose a header file in src/utils/Helpers.hpp
