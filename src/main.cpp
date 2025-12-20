@@ -14,6 +14,10 @@ int main()
 	std::vector<Pump> pumps;
 	// Declaring a vector for storing information about sale
 	std::vector<Sale> sales;
+	// Declating a vector for storing delivery information
+	std::vector<Delivery> deliveries;
+	// Declaring a vector to store information about payment
+	std::vector<Payment> payments;
 	// Declaring a vector for storing employee's information
 	std::vector<Employee> employees =
 	{
@@ -23,28 +27,15 @@ int main()
 		{"Andrew", "andrew123", "own1", "Owner"}
 	};
 	
-	// Declaring a vector for Delivery
-	std::vector<Delivery> d;
-	//first we take info of adding diliveries
-	addDelivery(d);
-    //now we show the dilivery success
-    showDeliveries(d);
-	// Declaring a vector for payment
-	std::vector<Payment> p;
-	//we give option to the user to add info for payment
-    addPayment(p);
-    // now we give him a recipet in a formatted way
-    showPayments(p);
-
 	// Declaring the revenue variable
 	double revenue = 0;
 	// Running the program 
-	runProgram(employees, pumps, fuels, sales, revenue);
+	runProgram(employees, pumps, fuels, sales, deliveries, payments, revenue);
 	return 0;
 }
 
 // Function defination for running the program
-void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Fuel>& fuels,std::vector<Sale>& sales, double& revenue)
+void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Fuel>& fuels,std::vector<Sale>& sales, std::vector<Delivery>& deliveries, std::vector<Payment>& payments, double& revenue)
 {
 	int choice;
 	Employee loggedUser;
@@ -56,7 +47,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 				break;
 		}
 		//std::cout << "Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Exit\n";
-	    animateTxt("Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Exit\n");
+	    animateTxt("Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Exit");
 		std::cin >> choice;
 		switch (choice)
 		{
@@ -75,7 +66,10 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 		case 3: 
 			makeSale(sales);
 			continue;
-		case 4:
+		case 4: 
+			addDelivery(deliveries);
+			continue;
+		case 5:
 			std::cout << "Exiting.....";
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 			return;
@@ -202,6 +196,11 @@ void makeSale(std::vector<Sale>& sales)
 	std::cout << "Enter the date: ";
 	std::cin >> s.date;
 	s.totalAmount = s.price * s.liters;
+
+	// Handling payment method
+	std::cout << "Enter payment method(Cash/Card/Online): ";
+	std::cin >> s.payment.method;
+
 	sales.push_back(s);  // Stores the sale and creates new storage location in the vector
 	
 	// Generating the reciept
@@ -211,6 +210,7 @@ void makeSale(std::vector<Sale>& sales)
 	std::cout << "Fuel: " << std::setw(3) << s.fuel << '\n';
 	std::cout << "Liters Sold: " << std::setw(3) << s.liters << '\n';
 	std::cout << "Total price: " << std::setw(3) << s.totalAmount << '\n';
+	std::cout << "Paid by: " << std::setw(3) << s.payment.method << '\n';
 	std::cout << "Date: " << s.date << '\n';
 }
 
@@ -236,7 +236,7 @@ void addDelivery(std::vector<Delivery>& deliveries)
     std::cin >> d.fuel;
     std::cout << "Enter delivery date: ";
     std::cin >> d.date;
-    std::cout << "Enter liters delivered: ";
+    std::cout << "Enter liters: ";
     std::cin >> d.litersDelivered;
     std::cout << "Enter delivery cost: ";
     std::cin >> d.deliveryCost;
@@ -263,39 +263,5 @@ void showDeliveries(const std::vector<Delivery>& deliveries)
         std::cout << "Cost: " << deliveries[i].deliveryCost << '\n';
     }
 }
-// Function to add a new payment
-void addPayment(std::vector<Payment>& payments)
-{
-    Payment p;
-    std::cout<<"\n----------------------\n";
-    std::cout<<"Give Payment Details\n";
-    std::cout<<"----------------------\n";
-    std::cout << "Enter payment method: ";
-    std::cin >> p.paymentMethod;
-    std::cout << "Enter payment date: ";
-    std::cin >> p.date;
-    std::cout << "Enter amount: ";
-    std::cin >> p.amount;
-    payments.push_back(p);
-    std::cout << "Payment recorded successfully!\n";
-}
-// Function to show all payments
-void showPayments(const std::vector<Payment>& payments)
-{
-    if (payments.size() == 0)
-    {
-        std::cout << "No payments recorded yet.\n";
-        return;
-    }
-    for (int i = 0; i < payments.size(); i++)
-    {
-        std::cout<<"\n=====================\n";
-        std::cout << "Payment Receipt!\n";
-        std::cout<<"=====================\n";
-        std::cout << "Payment " << i + 1 << '\n';
-        std::cout << "Method: " << payments[i].paymentMethod << '\n';
-        std::cout << "Date: " << payments[i].date << '\n';
-        std::cout << "Amount: " << payments[i].amount << '\n';
-    }
-}
+
 

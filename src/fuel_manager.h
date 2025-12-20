@@ -22,7 +22,7 @@ bool login(Employee &loggedUser, const std::vector<Employee>& employee);
 void makeSale(std::vector<Sale>& sales);
 
 // Function to run the program on loop
-void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Fuel>& fuels, std::vector<Sale>& sales, double& revenue);
+void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Fuel>& fuels, std::vector<Sale>& sales, std::vector<Delivery>& deliveries, std::vector<Payment>& payments, double& revenue);
 
 // // Function to calculate daily revenue 
 // double dailyRev(const std::vector<Sale>& sales, const std::string& date);

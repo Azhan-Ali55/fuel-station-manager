@@ -10,6 +10,13 @@ struct Fuel
     double liters;
 };
 
+// Stores information about payment methods
+struct Payment
+{
+    std::string method;
+    double amount;
+};
+
 // Stores the information about purchased fuel
 struct Sale
 {
@@ -19,6 +26,7 @@ struct Sale
     double liters;
     double price;
     double totalAmount;
+    Payment payment;
 };
 
 // Stores the information about employees
@@ -37,14 +45,6 @@ struct Delivery
     std::string date;
     double litersDelivered;
     double deliveryCost;
-};
-
-// Stores information about payment methods
-struct Payment
-{
-    std::string paymentMethod;
-    std::string date;
-    double amount;
 };
 
 // Stores information about the pump
