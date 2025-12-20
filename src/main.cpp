@@ -22,11 +22,20 @@ int main()
 		{"Ali", "ali123", "man1", "Manager"},
 		{"Andrew", "andrew123", "own1", "Owner"}
 	};
+	
 	// Declaring a vector for Delivery
-	  std::vector<Delivery> d;
-	    addDelivery(d);
+	std::vector<Delivery> d;
+	//first we take info of adding diliveries
+	addDelivery(d);
     //now we show the dilivery success
     showDeliveries(d);
+	// Declaring a vector for payment
+	std::vector<Payment> p;
+	//we give option to the user to add info for payment
+    addPayment(p);
+    // now we give him a recipet in a formatted way
+    showPayments(p);
+
 	// Declaring the revenue variable
 	double revenue = 0;
 	// Running the program 
