@@ -47,38 +47,122 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 			if (login(loggedUser, employees))
 				loggedIn = true;
 		}
-		//std::cout << "Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Exit\n";
-	    animateTxt("Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Log out\n6) Exit");
-		std::cin >> choice;
-		switch (choice)
-		{
-		case 1:
-			addPump(pumps);
-			std::this_thread::sleep_for(std::chrono::seconds(3));
-			std::cout << "The pump was successfully installed!\n";
-			continue;
-		case 2:
-			if (addFuel(fuels, pumps))
-			{
-				std::this_thread::sleep_for(std::chrono::seconds(3));
-				std::cout << "The fuel was added succesfully!\n";
-			}
-			continue;
-		case 3: 
-			makeSale(sales);
-			continue;
-		case 4: 
-			addDelivery(deliveries);
-			continue;
-		case 5: 
+		
+		// Give access based on roles
 
-		case 6:
-			std::cout << "Exiting.....";
-			std::this_thread::sleep_for(std::chrono::seconds(1));
-			return;
-		default:
-			std::cout << "Invalid Input!\n";
-			continue;
+		// For owner
+		if (loggedUser.role == "Owner")
+		{
+			animateTxt("Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Log out\n6) Exit");
+			std::cin >> choice;
+			switch (choice)
+			{
+			case 1:
+				addPump(pumps);
+				std::this_thread::sleep_for(std::chrono::seconds(3));
+				std::cout << "The pump was successfully installed!\n";
+				continue;
+			case 2:
+				if (addFuel(fuels, pumps))
+				{
+					std::this_thread::sleep_for(std::chrono::seconds(3));
+					std::cout << "The fuel was added succesfully!\n";
+				}
+				continue;
+			case 3:
+				makeSale(sales);
+				continue;
+			case 4:
+				addDelivery(deliveries);
+				continue;
+			case 5:
+				loggedIn = false;
+				loggedUser = Employee{};
+				std::this_thread::sleep_for(std::chrono::seconds(2));
+				std::cout << "Logged out successfully!\n";
+				continue;
+			case 6:
+				std::cout << "Exiting.....";
+				std::this_thread::sleep_for(std::chrono::seconds(1));
+				return;
+			default:
+				std::cout << "Invalid Input!\n";
+				continue;
+			}
+		}
+
+		// For Manager
+		else if (loggedUser.role == "Manager")
+		{
+			animateTxt("Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Log out\n6) Exit");
+			std::cin >> choice;
+			switch (choice)
+			{
+			case 1:
+				addPump(pumps);
+				std::this_thread::sleep_for(std::chrono::seconds(3));
+				std::cout << "The pump was successfully installed!\n";
+				continue;
+			case 2:
+				if (addFuel(fuels, pumps))
+				{
+					std::this_thread::sleep_for(std::chrono::seconds(3));
+					std::cout << "The fuel was added succesfully!\n";
+				}
+				continue;
+			case 3:
+				makeSale(sales);
+				continue;
+			case 4:
+				addDelivery(deliveries);
+				continue;
+			case 5:
+				loggedIn = false;
+				loggedUser = Employee{};
+				std::this_thread::sleep_for(std::chrono::seconds(2));
+				std::cout << "Logged out successfully!\n";
+				continue;
+			case 6:
+				std::cout << "Exiting.....";
+				std::this_thread::sleep_for(std::chrono::seconds(1));
+				return;
+			default:
+				std::cout << "Invalid Input!\n";
+				continue;
+			}
+		}
+
+		// For Fueler
+		else
+		{
+			animateTxt("Enter your choice:\n1) Add Fuel\n2) Sell\n3) Log out\n4) Exit");
+			std::cin >> choice;
+			switch (choice)
+			{
+			case 1:
+				if (addFuel(fuels, pumps))
+				{
+					std::this_thread::sleep_for(std::chrono::seconds(3));
+					std::cout << "The fuel was added succesfully!\n";
+				}
+				continue;
+			case 2:
+				makeSale(sales);
+				continue;
+			case 3:
+				loggedIn = false;
+				loggedUser = Employee{};
+				std::this_thread::sleep_for(std::chrono::seconds(2));
+				std::cout << "Logged out successfully!\n";
+				continue;
+			case 4:
+				std::cout << "Exiting.....";
+				std::this_thread::sleep_for(std::chrono::seconds(1));
+				return;
+			default:
+				std::cout << "Invalid Input!\n";
+				continue;
+			}
 		}
 	}
 }
