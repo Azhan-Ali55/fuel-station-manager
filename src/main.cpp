@@ -216,3 +216,41 @@ void animateTxt(std::string text)
 	}
 	std::cout << std::endl;
 }
+// Function to add a new delivery
+void addDelivery(std::vector<Delivery>& deliveries)
+{
+    Delivery d;
+    std::cout<<"------------------------\n";
+    std::cout<<"  Give Delivery Details \n";
+    std::cout<<"------------------------\n";
+    std::cout << "Enter fuel type: ";
+    std::cin >> d.fuel;
+    std::cout << "Enter delivery date: ";
+    std::cin >> d.date;
+    std::cout << "Enter liters delivered: ";
+    std::cin >> d.litersDelivered;
+    std::cout << "Enter delivery cost: ";
+    std::cin >> d.deliveryCost;
+    deliveries.push_back(d);
+    std::cout << "Delivery added successfully!\n";
+}
+// Function to show all deliveries
+void showDeliveries(const std::vector<Delivery>& deliveries)
+{
+    if (deliveries.size() == 0)
+    {
+        std::cout << "No deliveries recorded yet.\n";
+        return;
+    }
+    for (int i = 0; i < deliveries.size(); i++)
+    {   
+         std::cout<<"\n================\n";
+        std::cout<<"Delivery Status\n";
+        std::cout<<"================\n";
+        std::cout << "Delivery " << i + 1 << '\n';
+        std::cout << "Fuel: " << deliveries[i].fuel << '\n';
+        std::cout << "Date: " << deliveries[i].date << '\n';
+        std::cout << "Liters Delivered: " << deliveries[i].litersDelivered << '\n';
+        std::cout << "Cost: " << deliveries[i].deliveryCost << '\n';
+    }
+}
