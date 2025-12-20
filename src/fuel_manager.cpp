@@ -8,7 +8,7 @@
 #include <iomanip>
 
 // Function defination for running the program
-void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Fuel>& fuels, std::vector<Sale>& sales, std::vector<Delivery>& deliveries, std::vector<Expense>& expenses)
+void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Fuel>& fuels, std::vector<Sale>& sales, std::vector<Delivery>& deliveries, std::vector<Expense>& expenses, std::vector<Profit>& profits)
 {
 	int choice;
 	Employee loggedUser;
@@ -26,7 +26,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 		// For owner
 		if (loggedUser.role == "Owner")
 		{
-			std::cout << "Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Revenue Report\n6) Expense Report\n7) Log out\n8) Exit";
+			std::cout << "Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Revenue Report\n6) Expense Report\n7) Profit Report\n8) Log out\n9) Exit\n";
 			std::cin >> choice;
 			switch (choice)
 			{
@@ -69,13 +69,18 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 			}
 			case 7:
 			{
+				profitMenu(profits);
+				continue;
+			}
+			case 8:
+			{
 				loggedIn = false;
 				loggedUser = Employee{};
 				std::this_thread::sleep_for(std::chrono::seconds(2));
 				std::cout << "Logged out successfully!\n";
 				continue;
 			}
-			case 8:
+			case 9:
 			{
 				std::cout << "Exiting.....";
 				std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -93,7 +98,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 		// For Manager
 		else if (loggedUser.role == "Manager")
 		{
-			std::cout << "Enter your choice : \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Log out\n6) Revenue Report\n7) Exit";
+			std::cout << "Enter your choice : \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Log out\n6) Revenue Report\n7) Exit\n";
 			std::cin >> choice;
 			switch (choice)
 			{
@@ -154,7 +159,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 		// For Fueler
 		else
 		{
-			std::cout << "Enter your choice:\n1) Add Fuel\n2) Sell\n3) Log out\n4) Exit";
+			std::cout << "Enter your choice:\n1) Add Fuel\n2) Sell\n3) Log out\n4) Exit\n";
 			std::cin >> choice;
 			switch (choice)
 			{
@@ -247,7 +252,7 @@ bool addFuel(std::vector<Fuel>& fuels, const std::vector<Pump>& pumps)
 	// If no pump is found then print the invalid message
 	if (!pumpFound)
 	{
-		std::cout << "Invalid pump ID! Try Again";
+		std::cout << "Invalid pump ID! Try Again\n";
 		return false;
 	}
 
@@ -634,7 +639,7 @@ void setDailyExpense(std::vector<Expense>& expenses)
 	// For salary
 	s.type = "Salary";
 	s.date = "01-01-2025";
-	s.amount = 300.0;
+	s.amount = 1000.0;
 
 	// For electricity bill
 	e.type = "Electricity";
@@ -760,7 +765,7 @@ void expensesMenu(std::vector<Expense>& expenses)
 			break;
 		}
 
-		std::cout << "Expense for " << date << " is: " << dailyExpense(date);
+		std::cout << "Expense for " << date << " is: " << dailyExpense(date) << '\n';
 		break;
 	}
 	case 2: 
@@ -780,7 +785,7 @@ void expensesMenu(std::vector<Expense>& expenses)
 			break;
 		}
 
-		std::cout << "Expenses: " << monthlyExpense(month, year);
+		std::cout << "Expenses: " << monthlyExpense(month, year) << '\n';
 		break;
 	}
 	case 3: 
@@ -795,20 +800,162 @@ void expensesMenu(std::vector<Expense>& expenses)
 			std::cout << "Invalid year! Try again\n";
 			break;
 		}
-		std::cout << "Expenses: " << yearlyExpense(year);
+		std::cout << "Expenses: " << yearlyExpense(year) << '\n';
 		break;
 	}
 	case 4: 
 	{
-		std::cout << "Expenses: " << totalExpense();
+		std::cout << "Expenses: " << totalExpense() << '\n';
 		break;
+	}
+	case 5:
+	{
+		return;
 	}
 	default: 
 	{
-		std::cout << "Invalid input! Try again";
+		std::cout << "Invalid input! Try again\n";
 		break;
 	}
 
 	}
+}
+
+// Function to calculate daily profit
+double dailyProfit(const std::string& date)
+{
+	double profit = dailyRevenue(date) - dailyExpense(date);
+
+	Profit p;
+	p.label = "daily";
+	p.period = date;
+	p.amount = profit;
+
+	saveProfitToFile(p); // Storing the profit in the file
+	return profit;
+}
+
+// Function to calculate monthly profit 
+double monthlyProfit(int month, int year)
+{
+	double profit = monthlyRevenue(month, year) - monthlyExpense(month, year);
+
+	Profit p;
+	p.label = "monthly";
+	p.period = std::to_string(month) + "-" + std::to_string(year);
+	p.amount = profit;
+
+	saveProfitToFile(p);
+	return profit;
+}
+
+// Function to calculate yearly profit 
+double yearlyProfit(int year)
+{
+	double profit = yearlyRevenue(year) - yearlyExpense(year);
+
+	Profit p;
+	p.label = "yearly";
+	p.period = std::to_string(year);
+	p.amount = profit;
+
+	saveProfitToFile(p);
+	return profit;
+}
+
+// Function to calculate all time profit 
+double totalProfit()
+{
+	double profit = allRevenue() - totalExpense();
+
+	Profit p;
+	p.label = "total";
+	p.period = "all-time";
+	p.amount = profit;
+
+	saveProfitToFile(p);
+	return profit;
+}
+
+// Function to display the profit menu 
+void profitMenu(std::vector<Profit>& profits)
+{
+	std::cout << "===============================\n";
+	std::cout << "              Profit            \n";
+	std::cout << "===============================\n";
+
+	int choice;
+	std::cout << "1) View daily profit\n2) View monthly profit\n3) View yearly profit\n4) View all time profit\n5) Back\n";
+	std::cin >> choice;
+
+	switch (choice)
+	{
+	case 1: 
+	{
+		std::string date;
+		std::cout << "Enter date(DD-MM-YYYY): ";
+		std::cin >> date;
+		if (!validDate(date))
+		{
+			std::cout << "Invalid date format!\n";
+			break;
+		}
+
+		std::cout << "Profit on " << date << " is: " << dailyProfit(date) << '\n';
+		break;
+	}
+	case 2: 
+	{
+		int month;
+		int year;
+
+		std::cout << "Enter month: ";
+		std::cin >> month;
+		std::cout << "Enter year: ";
+		std::cin >> year;
+
+		// Check if month and year is valid
+		if (month < 0 || month > 12 || year < 2000 || year > 2025)
+		{
+			std::cout << "Invalid month/year! Try again\n";
+			break;
+		}
+
+		std::cout << "Profit: " << monthlyProfit(month, year) << '\n';
+		break;
+	}
+	case 3:
+	{
+		int year;
+		std::cout << "Enter year: ";
+		std::cin >> year;
+
+		// Check if the year is valid
+		if (year < 2000 || year > 2025)
+		{
+			std::cout << "Invalid year! Try again\n";
+			break;
+		}
+
+		std::cout << "Profit: " << yearlyProfit(year) << '\n';
+		break;
+	}
+	case 4:
+	{
+		std::cout << "Total Profit: " << totalProfit() << '\n';
+		break;
+	}
+	case 5:
+	{
+		return;
+	}
+	default:
+	{
+		std::cout << "Invalid Input! Try again";
+		break;
+	}
+
+	}
+
 }
 

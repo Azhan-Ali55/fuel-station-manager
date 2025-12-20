@@ -39,3 +39,12 @@ void saveExpenseToFile(const Expense& e);
 
 // Function to load the expenses from the file 
 void loadExpensesFromFile(std::vector<Expense>& expenses);
+
+// For Profit report
+
+// Function to store the profit reports in the file 
+void saveProfitToFile(const Profit& p);
+
+// Function to load the profit reports from the file 
+void loadProfitFromFile(std::vector<Profit>& profits);
+

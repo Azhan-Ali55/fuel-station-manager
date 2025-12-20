@@ -8,6 +8,7 @@ void ensureDataFiles()
     std::ofstream("data/sales.txt", std::ios::app);  // Creates a file sales.txt inside the data folder if it does not exist
     std::ofstream("data/deliveries.txt", std::ios::app); // Creates a file deliveries.txt inside the data folder if it does not exist 
     std::ofstream("data/expenses.txt", std::ios::app); // Creates a file expenses.txt inside the data folder if it does not exist
+    std::ofstream("data/profit_reports.txt", std::ios::app); // Creates a file profit_reports.txt inside the data folder if it does not exist
 }
 
 // For Sales
@@ -19,7 +20,7 @@ void saveSaleToFile(const Sale& s)
     if (!file) 
         return;
    
-    file << s.date << " " << s.fuel << " " << s.liters << " " << s.price << " " << s.totalAmount << " " << s.payment.method << "\n";
+    file << s.date << " " << s.fuel << " " << s.liters << " " << s.price << " " << s.totalAmount << " " << s.payment.method << '\n';
     file.close();
 }
 
@@ -76,7 +77,7 @@ void saveDeliveryToFile(const Delivery& d)
     if (!file)
         return;
 
-    file << d.date << " " << d.fuel << " " << d.litersDelivered << " " << d.deliveryCost << "\n";
+    file << d.date << " " << d.fuel << " " << d.litersDelivered << " " << d.deliveryCost << '\n';
     file.close();
 }
 
@@ -106,7 +107,7 @@ void saveExpenseToFile(const Expense& e)
     {
         return;
     }
-    file << e.date << " " << e.type << " " << e.amount << "\n";
+    file << e.date << " " << e.type << " " << e.amount << '\n';
     file.close();
 }
 
@@ -122,6 +123,36 @@ void loadExpensesFromFile(std::vector<Expense>& expenses)
     while (file >> e.date >> e.type >> e.amount)
     {
         expenses.push_back(e);
+    }
+    file.close();
+}
+
+// For Profit 
+
+void saveProfitToFile(const Profit& p)
+{
+    std::ofstream file("data/profit_reports.txt", std::ios::app);
+
+    if (!file)
+    {
+        return;
+    }
+
+    file << p.period << " " << p.label << " " << p.amount << '\n';
+
+}
+
+void loadProfitFromFile(std::vector<Profit>& reports)
+{
+    std::ifstream file("data/profit_reports.txt");
+    if (!file)
+    {
+        return;
+    }
+    Profit p;
+    while (file >> p.period >> p.label >> p.amount)
+    {
+        reports.push_back(p);
     }
     file.close();
 }

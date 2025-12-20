@@ -61,3 +61,11 @@ struct Expense
     std::string date; 
     double amount;
 };
+
+// Stores information about profit
+struct Profit
+{
+    std::string label;
+    std::string period;  
+    double amount;
+};
