@@ -9,7 +9,7 @@
 #include <iomanip>
 
 // Function defination for running the program
-void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Fuel>& fuels, std::vector<Sale>& sales, std::vector<Delivery>& deliveries, std::vector<Payment>& payments, double& revenue)
+void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Fuel>& fuels, std::vector<Sale>& sales, std::vector<Delivery>& deliveries)
 {
 	int choice;
 	Employee loggedUser;
@@ -27,82 +27,122 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 		// For owner
 		if (loggedUser.role == "Owner")
 		{
-			std::cout << "Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Log out\n6) Exit\n";
+			std::cout << "Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Log out\n6) Revenue Report\n7) Exit\n";
 			std::cin >> choice;
 			switch (choice)
 			{
 			case 1:
+			{
 				addPump(pumps);
 				std::this_thread::sleep_for(std::chrono::seconds(3));
 				std::cout << "The pump was successfully installed!\n";
 				continue;
+			}
 			case 2:
+			{
 				if (addFuel(fuels, pumps))
 				{
 					std::this_thread::sleep_for(std::chrono::seconds(3));
 					std::cout << "The fuel was added succesfully!\n";
 				}
 				continue;
+			}
 			case 3:
+			{
 				makeSale(sales);
 				continue;
+			}
 			case 4:
+			{
 				addDelivery(deliveries);
 				continue;
+			}
 			case 5:
+			{
 				loggedIn = false;
 				loggedUser = Employee{};
 				std::this_thread::sleep_for(std::chrono::seconds(2));
 				std::cout << "Logged out successfully!\n";
 				continue;
+			}
 			case 6:
+			{
+				revenueMenu(sales);
+				continue;
+			}
+			case 7:
+			{
 				std::cout << "Exiting.....";
 				std::this_thread::sleep_for(std::chrono::seconds(1));
 				return;
+			}
 			default:
+			{
 				std::cout << "Invalid Input!\n";
 				continue;
+			}
+			
 			}
 		}
 
 		// For Manager
 		else if (loggedUser.role == "Manager")
 		{
-			std::cout << "Enter your choice : \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Log out\n6) Exit";
+			std::cout << "Enter your choice : \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Log out\n6) Revenue Report\n7) Exit";
 			std::cin >> choice;
 			switch (choice)
 			{
 			case 1:
+			{
 				addPump(pumps);
 				std::this_thread::sleep_for(std::chrono::seconds(3));
 				std::cout << "The pump was successfully installed!\n";
 				continue;
+			}
 			case 2:
+			{
 				if (addFuel(fuels, pumps))
 				{
 					std::this_thread::sleep_for(std::chrono::seconds(3));
 					std::cout << "The fuel was added succesfully!\n";
 				}
 				continue;
+			}
 			case 3:
+			{
 				makeSale(sales);
 				continue;
+			}
 			case 4:
+			{
 				addDelivery(deliveries);
 				continue;
+			}
 			case 5:
+			{
 				loggedIn = false;
 				loggedUser = Employee{};
 				std::this_thread::sleep_for(std::chrono::seconds(2));
 				std::cout << "Logged out successfully!\n";
 				continue;
-			case 6:
+			}
+			case 6: 
+			{
+				revenueMenu(sales);
+				continue;
+			}
+			case 7:
+			{
 				std::cout << "Exiting.....";
 				std::this_thread::sleep_for(std::chrono::seconds(1));
 				return;
+			}
 			default:
+			{
 				std::cout << "Invalid Input!\n";
 				continue;
+			}
+
 			}
 		}
 
@@ -114,28 +154,39 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 			switch (choice)
 			{
 			case 1:
+			{
 				if (addFuel(fuels, pumps))
 				{
 					std::this_thread::sleep_for(std::chrono::seconds(3));
 					std::cout << "The fuel was added succesfully!\n";
 				}
 				continue;
+			}
 			case 2:
+			{
 				makeSale(sales);
 				continue;
+			}
 			case 3:
+			{
 				loggedIn = false;
 				loggedUser = Employee{};
 				std::this_thread::sleep_for(std::chrono::seconds(2));
 				std::cout << "Logged out successfully!\n";
 				continue;
+			}
 			case 4:
+			{
 				std::cout << "Exiting.....";
 				std::this_thread::sleep_for(std::chrono::seconds(1));
 				return;
+			}
 			default:
+			{
 				std::cout << "Invalid Input!\n";
 				continue;
+			}
+
 			}
 		}
 	}
@@ -244,6 +295,15 @@ bool login(Employee& loggedUser, const std::vector<Employee>& employee)
 	return false;
 }
 
+// Function defination to validate date
+bool validDate(const std::string& date)
+{
+	if (date.size() == 10 && date[2] == '-' && date[5] == '-')
+		return true;
+	else
+		return false;
+}
+
 // Function defination for making sale
 void makeSale(std::vector<Sale>& sales)
 {
@@ -254,8 +314,18 @@ void makeSale(std::vector<Sale>& sales)
 	std::cin >> s.liters;
 	std::cout << "Enter the price per liter: ";
 	std::cin >> s.price;
-	std::cout << "Enter the date: ";
-	std::cin >> s.date;
+	
+	// Validating date do that it is in DD-MM-YYYY format
+	int day, month, year;
+	char dash1, dash2;
+	std::cout << "Enter the date (DD-MM-YYYY): ";
+	std::cin >> day >> dash1 >> month >> dash2 >> year;
+	std::ostringstream oss;
+	oss << std::setw(2) << std::setfill('0') << day << "-"
+		<< std::setw(2) << std::setfill('0') << month << "-"
+		<< year;
+	s.date = oss.str();
+
 	s.totalAmount = s.price * s.liters;
 
 	// Handling payment method
@@ -305,6 +375,7 @@ void addDelivery(std::vector<Delivery>& deliveries)
 	deliveries.push_back(d);
 	std::cout << "Delivery added successfully!\n";
 }
+
 // Function to show all deliveries
 void showDeliveries(const std::vector<Delivery>& deliveries)
 {
@@ -325,3 +396,220 @@ void showDeliveries(const std::vector<Delivery>& deliveries)
 		std::cout << "Cost: " << deliveries[i].deliveryCost << '\n';
 	}
 }
+
+// Function defination for calculating daily revenue 
+double dailyRevenue(const std::string& date)
+{
+	std::ifstream file("data/sales.txt");
+	
+	// if file does not exist return 0
+	if (!file)
+	{
+		return 0.0;
+	}
+
+	double revenue = 0.0;
+	std::string line;
+	while (std::getline(file, line))
+	{
+		std::istringstream iss(line);
+		std::string saleDate, fuel, paymentMethod;
+		double liters, price, totalAmount;
+
+		iss >> saleDate >> fuel >> liters >> price >> totalAmount >> paymentMethod;
+
+		if (saleDate == date)
+		{
+			revenue += totalAmount;
+		}
+	}
+
+	return revenue;
+}
+
+// Function defination for calculating monthly revenue 
+double monthlyRevenue(int month, int year)
+{
+	std::ifstream file("data/sales.txt");
+	
+	// if file does not exist return 0
+	if (!file)
+	{
+		return 0.0;
+	}
+
+	double revenue = 0.0;
+	std::string line;
+	while (std::getline(file, line))
+	{
+		std::istringstream iss(line);
+		std::string saleDate, fuel, paymentMethod;
+		double liters, price, totalAmount;
+		iss >> saleDate >> fuel >> liters >> price >> totalAmount >> paymentMethod;
+
+		int saleMonth = std::stoi(saleDate.substr(3, 2));
+		int saleYear = std::stoi(saleDate.substr(6, 4));
+
+		if (saleMonth == month && saleYear == year)
+		{
+			revenue += totalAmount;
+		}
+	}
+
+	return revenue;
+}
+
+// Function defination for calculating yearly revenue
+double yearlyRevenue(int year)
+{
+	std::ifstream file("data/sales.txt");
+	if (!file)
+	{
+		return 0.0;
+	}
+	double revenue = 0.0;
+	std::string line;
+	while (std::getline(file, line))
+	{
+		std::istringstream iss(line);
+		std::string saleDate, fuel, paymentMethod;
+		double liters, price, totalAmount;
+		iss >> saleDate >> fuel >> liters >> price >> totalAmount >> paymentMethod;
+
+		int saleYear = std::stoi(saleDate.substr(6, 4));
+		if (saleYear == year)
+		{
+			revenue += totalAmount;
+		}
+	}
+
+	return revenue;
+}
+
+// Function defination for calculating all time revenue
+double allRevenue()
+{
+	std::ifstream file("data/sales.txt");
+	if (!file) return 0.0;
+
+	double revenue = 0.0;
+	std::string line;
+	while (std::getline(file, line))
+	{
+		std::istringstream iss(line);
+		std::string saleDate, fuel, paymentMethod;
+		double liters, price, totalAmount;
+		iss >> saleDate >> fuel >> liters >> price >> totalAmount >> paymentMethod;
+
+		revenue += totalAmount;
+	}
+
+	return revenue;
+}
+
+// Function to display the menu for revenue 
+void revenueMenu(const std::vector<Sale>& sales)
+{
+	std::cout << "===============================\n";
+	std::cout << "              Revenue          \n";
+	std::cout << "===============================\n";
+
+	int choice;
+	std::cout << "1) Daily Revenue\n2) Monthly Revenue\n3) Yearly Revenue\n4) All-Time Revenue\n5) Back\n";
+	std::cin >> choice;
+
+	// Using switch to display revenue 
+	switch (choice)
+	{
+	case 1:
+	{
+		std::string date;
+		std::cout << "Enter date (DD-MM-YYYY): ";
+		std::cin >> date;
+		
+		// Validate date
+		if (!validDate(date)) 
+		{
+			std::cout << "Invalid date format!\n";
+			return;
+		}
+
+		double revenue = loadRevenueFromFile("daily", date);
+		// If not file then calculate and save
+		if (revenue == 0.0) 
+		{
+			revenue = dailyRevenue(date);
+			saveRevenueToFile(revenue, "daily", date);
+		}
+
+		std::cout << "Revenue on " << date << ": " << revenue << "\n";
+		break;
+	}
+	case 2:
+	{
+		int month, year;
+		std::cout << "Enter month (1-12): ";
+		std::cin >> month;
+		std::cout << "Enter year: ";
+		std::cin >> year;
+
+		// Validate month and year
+		if (month < 1 || month > 12 || year < 2000 || year > 2025)
+		{
+			std::cout << "Invalid month/year!\n";
+			return;
+		}
+
+		// Ensures that month has 2 digits 
+		std::string identifier = (month < 10 ? "0" : "") + std::to_string(month) + "-" + std::to_string(year);
+
+		double revenue = loadRevenueFromFile("monthly", identifier);
+		// If not file then calculate and save
+		if (revenue == 0.0)
+		{
+			revenue = monthlyRevenue(month, year);
+			saveRevenueToFile(revenue, "monthly", identifier);
+		}
+		std::cout << "Revenue for " << month << " in " << year << " is: " << revenue << "\n";
+		break;
+	}
+	case 3:
+	{
+		int year;
+		std::cout << "Enter year: ";
+		std::cin >> year;
+		std::string identifier = std::to_string(year);
+		double revenue = loadRevenueFromFile("yearly", identifier);
+		// If not file then calculate and save
+		if (revenue == 0.0)
+		{
+			revenue = yearlyRevenue(year);
+			saveRevenueToFile(revenue, "yearly", identifier);
+		}
+		std::cout << "Revenue for " << year << ": " << revenue << "\n";
+		break;
+	}
+	case 4:
+	{
+		double revenue = loadRevenueFromFile("all-time");
+		// If not file then calculate and save
+		if (revenue == 0.0) 
+		{
+			revenue = allRevenue();      
+			saveRevenueToFile(revenue, "all-time");
+		}
+		std::cout << "All-Time revenue: " << revenue << "\n";
+		break;
+	}
+	case 5:
+	{
+		return;
+	}
+	default:
+	{
+		std::cout << "Invalid Input!";
+	}
+
+	}
+}
+

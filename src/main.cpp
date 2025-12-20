@@ -37,7 +37,7 @@ int main()
 	// Declaring the revenue variable
 	double revenue = 0;
 	// Running the program 
-	runProgram(employees, pumps, fuels, sales, deliveries, payments, revenue);
+	runProgram(employees, pumps, fuels, sales, deliveries);
 	return 0;
 }
 

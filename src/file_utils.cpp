@@ -33,3 +33,34 @@ void loadSalesFromFile(std::vector<Sale>& sales)
     }
     file.close();
 }
+
+// For Revenue
+
+void saveRevenueToFile(double revenue, const std::string& type, const std::string& identifier)
+{
+    std::string filename = "data/" + type + "_revenue.txt";
+    if (!identifier.empty()) {
+        filename = "data/" + type + "_revenue_" + identifier + ".txt";
+    }
+
+    std::ofstream file(filename);
+    if (!file) return;
+    file << revenue;
+    file.close();
+}
+
+double loadRevenueFromFile(const std::string& type, const std::string& identifier)
+{
+    std::string filename = "data/" + type + "_revenue.txt";
+    if (!identifier.empty()) {
+        filename = "data/" + type + "_revenue_" + identifier + ".txt";
+    }
+
+    std::ifstream file(filename);
+    if (!file) return 0.0;
+
+    double revenue = 0.0;
+    file >> revenue;
+    file.close();
+    return revenue;
+}
