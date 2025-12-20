@@ -22,6 +22,20 @@ int main()
 		{"Ali", "ali123", "man1", "Manager"},
 		{"Andrew", "andrew123", "own1", "Owner"}
 	};
+	
+	// Declaring a vector for Delivery
+	std::vector<Delivery> d;
+	//first we take info of adding diliveries
+	addDelivery(d);
+    //now we show the dilivery success
+    showDeliveries(d);
+	// Declaring a vector for payment
+	std::vector<Payment> p;
+	//we give option to the user to add info for payment
+    addPayment(p);
+    // now we give him a recipet in a formatted way
+    showPayments(p);
+
 	// Declaring the revenue variable
 	double revenue = 0;
 	// Running the program 
@@ -211,3 +225,77 @@ void animateTxt(std::string text)
 	}
 	std::cout << std::endl;
 }
+// Function to add a new delivery
+void addDelivery(std::vector<Delivery>& deliveries)
+{
+    Delivery d;
+    std::cout<<"------------------------\n";
+    std::cout<<"  Give Delivery Details \n";
+    std::cout<<"------------------------\n";
+    std::cout << "Enter fuel type: ";
+    std::cin >> d.fuel;
+    std::cout << "Enter delivery date: ";
+    std::cin >> d.date;
+    std::cout << "Enter liters delivered: ";
+    std::cin >> d.litersDelivered;
+    std::cout << "Enter delivery cost: ";
+    std::cin >> d.deliveryCost;
+    deliveries.push_back(d);
+    std::cout << "Delivery added successfully!\n";
+}
+// Function to show all deliveries
+void showDeliveries(const std::vector<Delivery>& deliveries)
+{
+    if (deliveries.size() == 0)
+    {
+        std::cout << "No deliveries recorded yet.\n";
+        return;
+    }
+    for (int i = 0; i < deliveries.size(); i++)
+    {   
+         std::cout<<"\n================\n";
+        std::cout<<"Delivery Status\n";
+        std::cout<<"================\n";
+        std::cout << "Delivery " << i + 1 << '\n';
+        std::cout << "Fuel: " << deliveries[i].fuel << '\n';
+        std::cout << "Date: " << deliveries[i].date << '\n';
+        std::cout << "Liters Delivered: " << deliveries[i].litersDelivered << '\n';
+        std::cout << "Cost: " << deliveries[i].deliveryCost << '\n';
+    }
+}
+// Function to add a new payment
+void addPayment(std::vector<Payment>& payments)
+{
+    Payment p;
+    std::cout<<"\n----------------------\n";
+    std::cout<<"Give Payment Details\n";
+    std::cout<<"----------------------\n";
+    std::cout << "Enter payment method: ";
+    std::cin >> p.paymentMethod;
+    std::cout << "Enter payment date: ";
+    std::cin >> p.date;
+    std::cout << "Enter amount: ";
+    std::cin >> p.amount;
+    payments.push_back(p);
+    std::cout << "Payment recorded successfully!\n";
+}
+// Function to show all payments
+void showPayments(const std::vector<Payment>& payments)
+{
+    if (payments.size() == 0)
+    {
+        std::cout << "No payments recorded yet.\n";
+        return;
+    }
+    for (int i = 0; i < payments.size(); i++)
+    {
+        std::cout<<"\n=====================\n";
+        std::cout << "Payment Receipt!\n";
+        std::cout<<"=====================\n";
+        std::cout << "Payment " << i + 1 << '\n';
+        std::cout << "Method: " << payments[i].paymentMethod << '\n';
+        std::cout << "Date: " << payments[i].date << '\n';
+        std::cout << "Amount: " << payments[i].amount << '\n';
+    }
+}
+
