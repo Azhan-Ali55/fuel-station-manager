@@ -39,15 +39,16 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 {
 	int choice;
 	Employee loggedUser;
+	bool loggedIn = false;
 	while (true)
 	{
-		while (true)
+		while (!loggedIn)
 		{
 			if (login(loggedUser, employees))
-				break;
+				loggedIn = true;
 		}
 		//std::cout << "Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Exit\n";
-	    animateTxt("Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Exit");
+	    animateTxt("Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Log out\n6) Exit");
 		std::cin >> choice;
 		switch (choice)
 		{
@@ -69,7 +70,9 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 		case 4: 
 			addDelivery(deliveries);
 			continue;
-		case 5:
+		case 5: 
+
+		case 6:
 			std::cout << "Exiting.....";
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 			return;
