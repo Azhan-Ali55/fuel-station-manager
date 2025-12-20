@@ -106,24 +106,24 @@ bool addFuel(std::vector<Fuel>& fuels, const std::vector<Pump>& pumps)
 	std::cout << "Enter the ID of the pump: ";
 	std::cin >> pumId;
 	
+	bool pumpFound = false; // Initializing the local variable to false
+	
 	// Now check if the pump ID is correct or not 
 	for (int i = 0; i < pumps.size(); i++)
-	{
-		bool pumpFound = false; // Initializing the local variable to false
-		
+	{	
 		// Check using if condition
 		if (pumId == pumps[i].pumpID)
 		{
 			pumpFound = true;
 			break;
 		}
+	}
 
-		// If no pump is found then print the invalid message
-		if (!pumpFound)
-		{
-			std::cout << "Invalid pump ID! Try Again";
-			return false;
-		}
+	// If no pump is found then print the invalid message
+	if (!pumpFound)
+	{
+		std::cout << "Invalid pump ID! Try Again";
+		return false;
 	}
 
 	Fuel f; // Creating the object of the Fuel strcut
