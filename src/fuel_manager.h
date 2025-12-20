@@ -25,7 +25,7 @@ bool validDate(const std::string& date);
 void makeSale(std::vector<Sale>& sales);
 
 // Function to run the program on loop
-void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Fuel>& fuels, std::vector<Sale>& sales, std::vector<Delivery>& deliveries);
+void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Fuel>& fuels, std::vector<Sale>& sales, std::vector<Delivery>& deliveries, std::vector<Expense>& expenses);
 
 // Function to calculate daily revenue 
 double dailyRevenue(const std::string& date);
@@ -44,5 +44,18 @@ void revenueMenu(const std::vector<Sale>& sales);
 
 // Function to add a new delivery
 void addDelivery(std::vector<Delivery>& deliveries);
+
 // Function to show all deliveries
 void showDeliveries(const std::vector<Delivery>& deliveries);
+
+// Function to add daily expenses
+void setDailyExpense(std::vector<Expense>& expenses);
+
+// Functions to calculate expenses
+double dailyExpense(const std::string& date);
+double monthlyExpense(int month, int year);
+double yearlyExpense(int year);
+double totalExpense();
+
+// Function for Expense menu
+void expensesMenu(std::vector<Expense>& expenses);

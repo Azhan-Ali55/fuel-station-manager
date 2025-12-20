@@ -1,6 +1,5 @@
 #pragma once
 
-#include "file_utils.h"
 #include "structures.h"
 #include <vector>
 #include <fstream>
@@ -33,3 +32,10 @@ void saveDeliveryToFile(const Delivery& d);
 // Function to load deliveries from the file
 void loadDeliveriesFromFile(std::vector<Delivery>& deliveries);
 
+// For Expenses
+
+// Function to store the expense in the file 
+void saveExpenseToFile(const Expense& e);
+
+// Function to load the expenses from the file 
+void loadExpensesFromFile(std::vector<Expense>& expenses);

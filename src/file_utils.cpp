@@ -7,6 +7,7 @@ void ensureDataFiles()
     std::filesystem::create_directory("data");  // Creates a folder data if it doesnt exist
     std::ofstream("data/sales.txt", std::ios::app);  // Creates a file sales.txt inside the data folder if it does not exist
     std::ofstream("data/deliveries.txt", std::ios::app); // Creates a file deliveries.txt inside the data folder if it does not exist 
+    std::ofstream("data/expenses.txt", std::ios::app); // Creates a file expenses.txt inside the data folder if it does not exist
 }
 
 // For Sales
@@ -93,5 +94,34 @@ void loadDeliveriesFromFile(std::vector<Delivery>& deliveries)
         deliveries.push_back(d);
     }
     
+    file.close();
+}
+
+// For Expenses
+
+void saveExpenseToFile(const Expense& e)
+{
+    std::ofstream file("data/expenses.txt", std::ios::app);
+    if (!file)
+    {
+        return;
+    }
+    file << e.date << " " << e.type << " " << e.amount << "\n";
+    file.close();
+}
+
+void loadExpensesFromFile(std::vector<Expense>& expenses)
+{
+    std::ifstream file("data/expenses.txt");
+    if (!file)
+    {
+        return;
+    }
+
+    Expense e;
+    while (file >> e.date >> e.type >> e.amount)
+    {
+        expenses.push_back(e);
+    }
     file.close();
 }

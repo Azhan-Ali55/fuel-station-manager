@@ -1,6 +1,5 @@
 #include "file_utils.h"
 #include "fuel_manager.h"
-#include "fuel_manager.h"
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -9,7 +8,7 @@
 #include <iomanip>
 
 // Function defination for running the program
-void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Fuel>& fuels, std::vector<Sale>& sales, std::vector<Delivery>& deliveries)
+void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Fuel>& fuels, std::vector<Sale>& sales, std::vector<Delivery>& deliveries, std::vector<Expense>& expenses)
 {
 	int choice;
 	Employee loggedUser;
@@ -27,7 +26,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 		// For owner
 		if (loggedUser.role == "Owner")
 		{
-			std::cout << "Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Log out\n6) Revenue Report\n7) Exit\n";
+			std::cout << "Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Revenue Report\n6) Expense Report\n7) Log out\n8) Exit";
 			std::cin >> choice;
 			switch (choice)
 			{
@@ -59,18 +58,24 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 			}
 			case 5:
 			{
+				revenueMenu(sales);
+				continue;
+			}
+			case 6:
+			{
+				setDailyExpense(expenses);
+				expensesMenu(expenses);
+				continue;
+			}
+			case 7:
+			{
 				loggedIn = false;
 				loggedUser = Employee{};
 				std::this_thread::sleep_for(std::chrono::seconds(2));
 				std::cout << "Logged out successfully!\n";
 				continue;
 			}
-			case 6:
-			{
-				revenueMenu(sales);
-				continue;
-			}
-			case 7:
+			case 8:
 			{
 				std::cout << "Exiting.....";
 				std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -196,7 +201,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 void addPump(std::vector<Pump>& pumps)
 {
 	// Setting maximum pump limit to 6
-	if (pumps.size() > 6)
+	if (pumps.size() >= 6)
 	{
 		std::cout << "Maximum pumps have been installed!\n";
 		return;
@@ -611,6 +616,197 @@ void revenueMenu(const std::vector<Sale>& sales)
 	default:
 	{
 		std::cout << "Invalid Input!";
+	}
+
+	}
+}
+
+// Function defination for daily expenses
+void setDailyExpense(std::vector<Expense>& expenses)
+{
+	// Creating objects for Expense
+	Expense s;
+	Expense e;
+	Expense d;
+
+	// Initializing the cost for each
+
+	// For salary
+	s.type = "Salary";
+	s.date = "01-01-2025";
+	s.amount = 300.0;
+
+	// For electricity bill
+	e.type = "Electricity";
+	e.date = "01-01-2025";
+	e.amount = 500.0;
+
+	// For delivery cost
+	d.type = "Delivery";
+	d.date = "01-01-2025";
+	d.amount = 300.0;
+
+	// Now add them to vector and create new space for next addtion
+	expenses.push_back(s);
+	expenses.push_back(e);
+	expenses.push_back(d);
+
+	// Save the expenses to the file 
+	saveExpenseToFile(e);
+	saveExpenseToFile(s);
+	saveExpenseToFile(d);
+}
+
+// For calculate daily expense
+double dailyExpense(const std::string& date)
+{
+	std::ifstream file("data/expenses.txt");
+	if (!file)
+	{
+		return 0.0;
+	}
+
+	double total = 0.0;
+	Expense e;
+
+	while (file >> e.date >> e.type >> e.amount)
+	{
+		if (e.date == date)
+			total += e.amount;
+	}
+	return total;
+}
+
+// For calculating monthly expenses
+double monthlyExpense(int month, int year)
+{
+	std::ifstream file("data/expenses.txt");
+	if (!file)
+	{
+		return 0.0;
+	}
+
+	double total = 0.0;
+	Expense e;
+
+	while (file >> e.date >> e.type >> e.amount)
+	{
+		int m = std::stoi(e.date.substr(3, 2));
+		int y = std::stoi(e.date.substr(6, 4));
+
+		if (m == month && y == year)
+			total += e.amount;
+	}
+	return total;
+}
+
+// For calculating yearly expenses
+double yearlyExpense(int year)
+{
+	std::ifstream file("data/expenses.txt");
+	if (!file) return 0.0;
+
+	double total = 0.0;
+	Expense e;
+
+	while (file >> e.date >> e.type >> e.amount)
+	{
+		int y = std::stoi(e.date.substr(6, 4));
+		if (y == year)
+			total += e.amount;
+	}
+	return total;
+}
+
+// For Calculating total expenses
+double totalExpense()
+{
+	std::ifstream file("data/expenses.txt");
+	if (!file)
+	{
+		return 0.0;
+	}
+	double total = 0.0;
+	Expense e;
+	while (file >> e.date >> e.type >> e.amount)
+	{
+		total += e.amount;
+	}
+	file.close();
+	return total;
+}
+
+// Function to display the expense menu 
+void expensesMenu(std::vector<Expense>& expenses)
+{
+	std::cout << "===============================\n";
+	std::cout << "            Expenses           \n";
+	std::cout << "===============================\n";
+
+	int choice;
+	std::cout << "1) View daily expenses\n2) View monthly expenses\n3) View yearly expenses\n4) View all time expenses\n5) Back\n";
+	std::cin >> choice;
+
+	switch (choice)
+	{
+	case 1: 
+	{
+		std::string date;
+		std::cout << "Enter date(DD-MM-YYYY): ";
+		std::cin >> date;
+		if (!validDate(date))
+		{
+			std::cout << "Invalid date format!\n";
+			break;
+		}
+
+		std::cout << "Expense for " << date << " is: " << dailyExpense(date);
+		break;
+	}
+	case 2: 
+	{
+		int month;
+		int year;
+
+		std::cout << "Enter month: ";
+		std::cin >> month;
+		std::cout << "Enter year: ";
+		std::cin >> year;
+
+		// Check if month and year is valid
+		if (month < 0 || month > 12 || year < 2000 || year > 2025)
+		{
+			std::cout << "Invalid month/year! Try again\n";
+			break;
+		}
+
+		std::cout << "Expenses: " << monthlyExpense(month, year);
+		break;
+	}
+	case 3: 
+	{
+		int year;
+		std::cout << "Enter year: ";
+		std::cin >> year;
+
+		// Check if the year is valid
+		if (year < 2000 || year > 2025)
+		{
+			std::cout << "Invalid year! Try again\n";
+			break;
+		}
+		std::cout << "Expenses: " << yearlyExpense(year);
+		break;
+	}
+	case 4: 
+	{
+		std::cout << "Expenses: " << totalExpense();
+		break;
+	}
+	default: 
+	{
+		std::cout << "Invalid input! Try again";
+		break;
 	}
 
 	}

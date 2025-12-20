@@ -20,8 +20,8 @@ int main()
 	std::vector<Sale> sales;
 	// Declating a vector for storing delivery information
 	std::vector<Delivery> deliveries;
-	// Declaring a vector to store information about payment
-	std::vector<Payment> payments;
+	// Declaring a vector for storing expenses 
+	std::vector<Expense> expenses;
 	// Declaring a vector for storing employee's information
 	std::vector<Employee> employees =
 	{
@@ -35,11 +35,12 @@ int main()
 	loadSalesFromFile(sales);
 	// Loading deliveries from the file
 	loadDeliveriesFromFile(deliveries);
-
+	// Loading expenses from the file
+	loadExpensesFromFile(expenses);
 	// Declaring the revenue variable
 	double revenue = 0;
 	// Running the program 
-	runProgram(employees, pumps, fuels, sales, deliveries);
+	runProgram(employees, pumps, fuels, sales, deliveries, expenses);
 	return 0;
 }
 
