@@ -43,7 +43,7 @@ endforeach()
 add_executable(
     main
     ${FILES}
-)
+ )
 
 # inlcude all directories
 # suppose a header file in src/utils/Helpers.hpp
@@ -51,6 +51,7 @@ add_executable(
 # #include "Helpers.hpp" instead of #include "utils/Helpers.hpp"; utils/Helpers.hpp since src firectory has to be included
 target_include_directories(
     main PRIVATE
+    "${CMAKE_SOURCE_DIR}/src"
     ${FOLDERS}
     "${CMAKE_SOURCE_DIR}/external/included"
 )

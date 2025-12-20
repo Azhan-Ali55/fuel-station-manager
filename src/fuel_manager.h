@@ -45,7 +45,3 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 void addDelivery(std::vector<Delivery>& deliveries);
 // Function to show all deliveries
 void showDeliveries(const std::vector<Delivery>& deliveries);
-// Function to add a new payment
-void addPayment(std::vector<Payment>& payments);
-// Function to show all payments
-void showPayments(const std::vector<Payment>& payments);

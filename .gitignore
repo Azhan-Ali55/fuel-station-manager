@@ -37,7 +37,7 @@
 *.out
 *.app
 
-# debug information files
+# Debug information files
 *.dwo
 
 ###
@@ -45,6 +45,9 @@
 # os specific files
 .DS_Store
 
-# build folders
+# Data folder
+data/
+
+# Build folders
 build/
 .vs/

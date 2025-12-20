@@ -1,5 +1,8 @@
+#include "file_utils.h"
 #include "fuel_manager.h"
+#include <filesystem>
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <chrono>
 #include <thread>
@@ -8,6 +11,8 @@
 
 int main()
 {
+	// Ensuring data files
+	ensureDataFiles();  
 	// Declaring a vector for storing fuels
 	std::vector<Fuel> fuels;
 	// Declaring a vector for storing pumps
@@ -26,7 +31,10 @@ int main()
 		{"Ali", "ali123", "man1", "Manager"},
 		{"Andrew", "andrew123", "own1", "Owner"}
 	};
-	
+
+	// Loading sales from the file 
+	loadSalesFromFile(sales);
+
 	// Declaring the revenue variable
 	double revenue = 0;
 	// Running the program 
@@ -53,7 +61,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 		// For owner
 		if (loggedUser.role == "Owner")
 		{
-			animateTxt("Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Log out\n6) Exit");
+			std::cout << "Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Log out\n6) Exit\n";
 			std::cin >> choice;
 			switch (choice)
 			{
@@ -94,7 +102,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 		// For Manager
 		else if (loggedUser.role == "Manager")
 		{
-			animateTxt("Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Log out\n6) Exit");
+			std::cout << "Enter your choice : \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Log out\n6) Exit";
 			std::cin >> choice;
 			switch (choice)
 			{
@@ -135,7 +143,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 		// For Fueler
 		else
 		{
-			animateTxt("Enter your choice:\n1) Add Fuel\n2) Sell\n3) Log out\n4) Exit");
+			std::cout << "Enter your choice:\n1) Add Fuel\n2) Sell\n3) Log out\n4) Exit";
 			std::cin >> choice;
 			switch (choice)
 			{
@@ -289,6 +297,7 @@ void makeSale(std::vector<Sale>& sales)
 	std::cin >> s.payment.method;
 
 	sales.push_back(s);  // Stores the sale and creates new storage location in the vector
+	saveSaleToFile(s);   // Calling function to save the sale
 	
 	// Generating the reciept
 	std::cout << "===============================================\n";
