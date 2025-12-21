@@ -48,3 +48,11 @@ void saveProfitToFile(const Profit& p);
 // Function to load the profit reports from the file 
 void loadProfitFromFile(std::vector<Profit>& profits);
 
+// For Pump
+
+// Function to store the pumps in the file 
+void savePumpToFile(const Pump& p);
+
+// Function to load pumps from the file 
+void loadPumpFromFile(std::vector<Pump>& pumps);
+

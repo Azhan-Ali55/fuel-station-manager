@@ -6,6 +6,8 @@
 #include <chrono>
 #include <thread>
 #include <iomanip>
+#include <cstdlib>
+#include <ctime>
 
 // Function defination for running the program
 void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Fuel>& fuels, std::vector<Sale>& sales, std::vector<Delivery>& deliveries, std::vector<Expense>& expenses, std::vector<Profit>& profits)
@@ -26,7 +28,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 		// For owner
 		if (loggedUser.role == "Owner")
 		{
-			std::cout << "Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Revenue Report\n6) Expense Report\n7) Profit Report\n8) Log out\n9) Exit\n";
+			std::cout << "Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Revenue Report\n6) Expense Report\n7) Profit Report\n8) Pump status\n9) Repair Pump\n10) Log out\n11) Exit\n";
 			std::cin >> choice;
 			switch (choice)
 			{
@@ -39,16 +41,12 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 			}
 			case 2:
 			{
-				if (addFuel(fuels, pumps))
-				{
-					std::this_thread::sleep_for(std::chrono::seconds(3));
-					std::cout << "The fuel was added succesfully!\n";
-				}
+				refillPump(pumps);
 				continue;
 			}
 			case 3:
 			{
-				makeSale(sales);
+				makeSale(sales, pumps);
 				continue;
 			}
 			case 4:
@@ -74,13 +72,23 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 			}
 			case 8:
 			{
+				pumpsStatus(pumps);
+				continue;
+			}
+			case 9:
+			{
+				repairPump(pumps);
+				continue;
+			}
+			case 10:
+			{
 				loggedIn = false;
 				loggedUser = Employee{};
 				std::this_thread::sleep_for(std::chrono::seconds(2));
 				std::cout << "Logged out successfully!\n";
 				continue;
 			}
-			case 9:
+			case 11:
 			{
 				std::cout << "Exiting.....";
 				std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -98,37 +106,42 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 		// For Manager
 		else if (loggedUser.role == "Manager")
 		{
-			std::cout << "Enter your choice : \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Log out\n6) Revenue Report\n7) Exit\n";
+			std::cout << "Enter your choice: \n1) Add Fuel\n2) Sell\n3) Order Fuel\n4) Expense Report\n5) Pump Status\n6) Repair Pump\n7) Log out\n8) Exit\n";
 			std::cin >> choice;
 			switch (choice)
 			{
 			case 1:
 			{
-				addPump(pumps);
-				std::this_thread::sleep_for(std::chrono::seconds(3));
-				std::cout << "The pump was successfully installed!\n";
+				refillPump(pumps);
 				continue;
 			}
 			case 2:
 			{
-				if (addFuel(fuels, pumps))
-				{
-					std::this_thread::sleep_for(std::chrono::seconds(3));
-					std::cout << "The fuel was added succesfully!\n";
-				}
+				makeSale(sales, pumps);
 				continue;
 			}
 			case 3:
 			{
-				makeSale(sales);
+				addDelivery(deliveries);
 				continue;
 			}
 			case 4:
 			{
-				addDelivery(deliveries);
+				setDailyExpense(expenses);
+				expensesMenu(expenses);
 				continue;
 			}
 			case 5:
+			{
+				pumpsStatus(pumps);
+				continue;
+			}
+			case 6: 
+			{
+				repairPump(pumps);
+				continue;
+			}
+			case 7:
 			{
 				loggedIn = false;
 				loggedUser = Employee{};
@@ -136,12 +149,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 				std::cout << "Logged out successfully!\n";
 				continue;
 			}
-			case 6: 
-			{
-				revenueMenu(sales);
-				continue;
-			}
-			case 7:
+			case 8:
 			{
 				std::cout << "Exiting.....";
 				std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -159,25 +167,26 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 		// For Fueler
 		else
 		{
-			std::cout << "Enter your choice:\n1) Add Fuel\n2) Sell\n3) Log out\n4) Exit\n";
+			std::cout << "Enter your choice:\n1) Add Fuel\n2) Sell\n3) Repair Pump\n4) Log out\n5) Exit\n";
 			std::cin >> choice;
 			switch (choice)
 			{
 			case 1:
 			{
-				if (addFuel(fuels, pumps))
-				{
-					std::this_thread::sleep_for(std::chrono::seconds(3));
-					std::cout << "The fuel was added succesfully!\n";
-				}
+				refillPump(pumps);
 				continue;
 			}
 			case 2:
 			{
-				makeSale(sales);
+				makeSale(sales, pumps);
 				continue;
 			}
 			case 3:
+			{
+				repairPump(pumps);
+				continue;
+			}
+			case 4:
 			{
 				loggedIn = false;
 				loggedUser = Employee{};
@@ -185,7 +194,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 				std::cout << "Logged out successfully!\n";
 				continue;
 			}
-			case 4:
+			case 5:
 			{
 				std::cout << "Exiting.....";
 				std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -215,57 +224,102 @@ void addPump(std::vector<Pump>& pumps)
 	Pump p; // Creating the object of the Pump struct
 	std::cout << "Enter the ID of the pump: ";
 	std::cin >> p.pumpID;
-	std::cout << "Enter the fuel type of the pump: ";
-	std::cin >> p.fuelType;
-	std::cin.ignore(); // Clear the input buffer
-	pumps.push_back(p); // Adds a new pump to the vector 
-}
 
-// Function defination for adding fuel
-bool addFuel(std::vector<Fuel>& fuels, const std::vector<Pump>& pumps)
-{
-	if (pumps.size() == 0)
-	{
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-		std::cout << "No pumps have been installed. Install the pumps first to add fuel\n";
-		return false;
-	}
-
-	// Asking the user for which pump they want to add the fuel to 
-	int pumId;
-	std::cout << "Enter the ID of the pump: ";
-	std::cin >> pumId;
-
-	bool pumpFound = false; // Initializing the local variable to false
-
-	// Now check if the pump ID is correct or not 
+	// Ensure no duplicate Id exists
 	for (int i = 0; i < pumps.size(); i++)
 	{
-		// Check using if condition
-		if (pumId == pumps[i].pumpID)
+		if (pumps[i].pumpID == p.pumpID)
 		{
-			pumpFound = true;
-			break;
+			std::cout << "A pump with this ID is already installed! Try Again\n";
+			return;
 		}
 	}
 
-	// If no pump is found then print the invalid message
-	if (!pumpFound)
+	std::cout << "Enter the fuel type of the pump: ";
+	std::cin >> p.fuelType;
+	std::cin.ignore(); // Clear the input buffer
+
+	// Initializing pump information
+	p.maxCapacity = 500;
+	p.currentLiters = 500;    
+	p.dispensedLiters = 0;
+	p.malfunc = false;
+	p.leak = false;
+	pumps.push_back(p); // Adds a new pump to the vector 
+	savePumpToFile(p);
+}
+
+// Function defination for refilling the pump
+void refillPump(std::vector<Pump>& pumps)
+{
+	int id;
+	std::cout << "Enter pump ID: ";
+	std::cin >> id;
+
+	// Check if pump exists
+	for (int i = 0; i < pumps.size(); i++)
 	{
-		std::cout << "Invalid pump ID! Try Again\n";
-		return false;
+		if (pumps[i].pumpID == id)
+		{
+			pumps[i].currentLiters = pumps[i].maxCapacity;
+			pumps[i].leak = false;
+			pumps[i].malfunc = false;
+			std::cout << "Pump refilled successfully.\n";
+			return;
+		}
 	}
 
-	Fuel f; // Creating the object of the Fuel strcut
-	std::cout << "Enter fuel name: ";
-	std::cin >> f.name;
-	std::cout << "Enter fuel price per liter: ";
-	std::cin >> f.price;
-	std::cout << "Enter the amount of liters: ";
-	std::cin >> f.liters;
-	std::cin.ignore(); // Clear the input buffer
-	fuels.push_back(f); // Adds a new fuel to the vector 
-	return true;
+	std::cout << "Pump not found!\n";
+}
+
+// Function defination for fixing the pump
+void repairPump(std::vector<Pump>& pumps)
+{
+	int id;
+	std::cout << "Enter pump ID to repair: ";
+	std::cin >> id;
+
+	for (int i = 0; i < pumps.size(); i++)
+	{
+		if (pumps[i].pumpID == id)
+		{
+			if (!pumps[i].malfunc)
+			{
+				std::cout << "Pump is already operational\n";
+				return;
+			}
+
+			pumps[i].malfunc = true;
+			pumps[i].leak = false;
+			std::cout << "Pump repaired successfully\n";
+			return;
+		}
+	}
+
+	std::cout << "Invalid pump ID! Try Again\n";
+}
+
+// Function defination for viewing pump status
+void pumpsStatus(std::vector<Pump>& pumps)
+{
+	if (pumps.size() == 0)
+	{
+		std::cout << "No pumps have been installed\n";
+		return;
+	}
+
+	std::cout << "==================== PUMP STATUS ====================\n";
+	for (int i = 0; i < pumps.size(); i++)
+	{
+		std::cout << "Pump ID: " << pumps[i].pumpID << '\n';
+		std::cout << "Fuel Type: " << pumps[i].fuelType << '\n';
+		std::cout << "Current Liters: " << pumps[i].currentLiters << '\n';
+		std::cout << "Total Dispensed Liters: " << pumps[i].dispensedLiters << '\n';
+		std::cout << "Max Capacity: " << pumps[i].maxCapacity << '\n';
+		std::cout << "Malfunction: " << (pumps[i].malfunc ? "Yes" : "No") << '\n';
+		std::cout << "Leak: " << (pumps[i].leak ? "Yes" : "No") << '\n';
+		std::cout << "-----------------------------------------------------\n";
+	}
 }
 
 // Function defination for login roles
@@ -315,16 +369,65 @@ bool validDate(const std::string& date)
 }
 
 // Function defination for making sale
-void makeSale(std::vector<Sale>& sales)
+void makeSale(std::vector<Sale>& sales, std::vector<Pump>& pumps)
 {
-	Sale s; // Making object for Sale struct 
-	std::cout << "Enter the fuel: ";
-	std::cin >> s.fuel;
+	int pumpID;
+	std::cout << "Enter pump ID: ";
+	std::cin >> pumpID;
+
+	// Check if pump exists
+	int pumpIndex = -1;
+	for (int i = 0; i < pumps.size(); i++)
+	{
+		if (pumps[i].pumpID == pumpID)
+		{
+			pumpIndex = i;
+			break;
+		}
+	}
+
+	if (pumpIndex == -1)
+	{
+		std::cout << "Invalid Pump ID! Try again\n";
+		return;
+	}
+
+	Pump& pump = pumps[pumpIndex];
+	if (pump.malfunc)
+	{
+		std::cout << "Pump malfunctioned.\n";
+		return;
+	}
+
+	if (pump.currentLiters <= 0)
+	{
+		std::cout << "Pump empty.\n";
+		return;
+	}
+
+	Sale s;
+	s.pumpId = pump.pumpID;
+	s.fuel = pump.fuelType;
 	std::cout << "Enter the liters: ";
 	std::cin >> s.liters;
-	std::cout << "Enter the price per liter: ";
-	std::cin >> s.price;
+	if (s.liters > pump.currentLiters)
+	{
+		std::cout << "Not enough fuel in the pump! Refill and Try again\n";
+		return;
+	}
 	
+	if (s.fuel == "Petrol")
+		s.price = 280;
+	else if (s.fuel == "Diesel")
+		s.price = 300;
+	else if (s.fuel == "Gas")
+		s.price = 250;
+	else
+	{
+		std::cout << "Invalid Input! Try again\n";
+		return;
+	}
+
 	// Validating date do that it is in DD-MM-YYYY format
 	int day, month, year;
 	char dash1, dash2;
@@ -336,6 +439,28 @@ void makeSale(std::vector<Sale>& sales)
 		<< year;
 	s.date = oss.str();
 
+	// Random malfunction and leakage chnace
+	srand(time(0));
+	int chance = rand() % 100;
+	if (chance < 5)
+	{
+		pump.malfunc = true;
+		std::cout << "Pump malfunctioned during sale.\n";
+		return;
+	}
+	else if (chance < 10)
+	{
+		pump.leak = true;
+		int leakAmount = rand() % 51 + 5;
+		pump.currentLiters -= leakAmount;
+		if (pump.currentLiters < 0) 
+			pump.currentLiters = 0;
+		std::cout << "Leak detected! " << leakAmount << " liters lost\n";
+	}
+
+	pump.currentLiters -= s.liters;
+	pump.dispensedLiters += s.liters;
+	// Calculating total
 	s.totalAmount = s.price * s.liters;
 
 	// Handling payment method
@@ -346,14 +471,15 @@ void makeSale(std::vector<Sale>& sales)
 	saveSaleToFile(s);   // Calling function to save the sale
 
 	// Generating the reciept
-	std::cout << "===============================================\n";
-	std::cout << "                     RECIEPT                   \n";
-	std::cout << "===============================================\n";
-	std::cout << "Fuel: " << std::setw(3) << s.fuel << '\n';
-	std::cout << "Liters Sold: " << std::setw(3) << s.liters << '\n';
-	std::cout << "Total price: " << std::setw(3) << s.totalAmount << '\n';
-	std::cout << "Paid by: " << std::setw(3) << s.payment.method << '\n';
+	std::cout << "\n=========== RECEIPT ===========\n";
+	std::cout << "Pump ID: " << s.pumpId << '\n';
+	std::cout << "Fuel: " << s.fuel << '\n';
+	std::cout << "Liters: " << s.liters << '\n';
+	std::cout << "Price/L: " << s.price << '\n';
+	std::cout << "Total: " << s.totalAmount << '\n';
+	std::cout << "Paid by: " << s.payment.method << '\n';
 	std::cout << "Date: " << s.date << '\n';
+	std::cout << "===============================\n";
 }
 
 // Function  defination for animating text

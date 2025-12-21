@@ -9,6 +9,7 @@ void ensureDataFiles()
     std::ofstream("data/deliveries.txt", std::ios::app); // Creates a file deliveries.txt inside the data folder if it does not exist 
     std::ofstream("data/expenses.txt", std::ios::app); // Creates a file expenses.txt inside the data folder if it does not exist
     std::ofstream("data/profit_reports.txt", std::ios::app); // Creates a file profit_reports.txt inside the data folder if it does not exist
+    std::ofstream("data/pumps.txt", std::ios::app); // Creates a file pumps.txt inside the data folder if it does not exist
 }
 
 // For Sales
@@ -139,7 +140,7 @@ void saveProfitToFile(const Profit& p)
     }
 
     file << p.period << " " << p.label << " " << p.amount << '\n';
-
+    file.close();
 }
 
 void loadProfitFromFile(std::vector<Profit>& reports)
@@ -153,6 +154,38 @@ void loadProfitFromFile(std::vector<Profit>& reports)
     while (file >> p.period >> p.label >> p.amount)
     {
         reports.push_back(p);
+    }
+    file.close();
+}
+
+// For Pumps
+
+void savePumpToFile(const Pump& p)
+{
+    std::ofstream file("data/pumps.txt", std::ios::app);
+
+    if (!file)
+    {
+        return;
+    }
+
+    file << p.pumpID << " " << p.fuelType << " " << p.maxCapacity << " " << p.currentLiters << " " << p.dispensedLiters << " " << p.malfunc << " " << p.leak << '\n';
+    file.close();
+}
+
+void loadPumpFromFile(std::vector<Pump>& pumps)
+{
+    std::ifstream file("data/pumps.txt");
+
+    if (!file)
+    {
+        return;
+    }
+
+    Pump p;
+    while (file >> p.pumpID >> p.fuelType >> p.maxCapacity >> p.currentLiters >> p.dispensedLiters >> p.malfunc >> p.leak)
+    {
+        pumps.push_back(p);
     }
     file.close();
 }

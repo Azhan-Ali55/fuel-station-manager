@@ -21,7 +21,7 @@ struct Sale
 {
     std::string fuel;
     std::string date;
-    int saleId;
+    int pumpId;
     double liters;
     double price;
     double totalAmount;
@@ -51,7 +51,11 @@ struct Pump
 {
     int pumpID;
     std::string fuelType;
+    double maxCapacity = 500.0;
     double dispensedLiters;
+    double currentLiters;
+    bool leak;
+    bool malfunc;
 };
 
 // Stores information about the expenses
