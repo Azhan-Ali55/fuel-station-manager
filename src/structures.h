@@ -73,3 +73,11 @@ struct Profit
     std::string period;  
     double amount;
 };
+
+// Stores informaiton about the fuel stock
+struct FuelStock
+{
+    std::string fuelType;
+    double currentLiters;
+    double maxCapacity;
+};

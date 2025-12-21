@@ -40,6 +40,14 @@ int main()
 		{"Andrew", "andrew123", "own1", "Owner"}
 	};
 
+	// Declaring a vector for storing stock 
+	std::vector<FuelStock> stock = 
+	{
+		{"Petrol", 0, 1500}, 
+		{"Diesel", 0, 500},   
+		{"Gas", 0, 1000}      
+	};
+
 	// Loading sales from the file 
 	loadSalesFromFile(sales);
 	
@@ -54,12 +62,15 @@ int main()
 	
 	// Loading pumps from the file
 	loadPumpFromFile(pumps);
+
+	// Loading stock from the file
+	loadStockFromFile(stock);
 	
 	// Declaring the revenue variable
 	double revenue = 0;
 	
 	// Running the program 
-	runProgram(employees, pumps, fuels, sales, deliveries, expenses, profits);
+	runProgram(employees, pumps, sales, deliveries, expenses, profits, stock);
 	return 0;
 }
 

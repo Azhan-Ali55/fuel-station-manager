@@ -8,9 +8,10 @@
 #include <iomanip>
 #include <cstdlib>
 #include <ctime>
+#include <algorithm>
 
 // Function defination for running the program
-void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Fuel>& fuels, std::vector<Sale>& sales, std::vector<Delivery>& deliveries, std::vector<Expense>& expenses, std::vector<Profit>& profits)
+void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Sale>& sales, std::vector<Delivery>& deliveries, std::vector<Expense>& expenses, std::vector<Profit>& profits, std::vector<FuelStock>& stock)
 {
 	int choice;
 	Employee loggedUser;
@@ -41,7 +42,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 			}
 			case 2:
 			{
-				refillPump(pumps);
+				refillPump(pumps, stock);
 				continue;
 			}
 			case 3:
@@ -51,7 +52,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 			}
 			case 4:
 			{
-				addDelivery(deliveries);
+				addDelivery(deliveries, expenses, stock);
 				continue;
 			}
 			case 5:
@@ -112,7 +113,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 			{
 			case 1:
 			{
-				refillPump(pumps);
+				refillPump(pumps, stock);
 				continue;
 			}
 			case 2:
@@ -122,7 +123,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 			}
 			case 3:
 			{
-				addDelivery(deliveries);
+				addDelivery(deliveries, expenses, stock);
 				continue;
 			}
 			case 4:
@@ -173,7 +174,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 			{
 			case 1:
 			{
-				refillPump(pumps);
+				refillPump(pumps, stock);
 				continue;
 			}
 			case 2:
@@ -250,7 +251,7 @@ void addPump(std::vector<Pump>& pumps)
 }
 
 // Function defination for refilling the pump
-void refillPump(std::vector<Pump>& pumps)
+void refillPump(std::vector<Pump>& pumps, std::vector<FuelStock>& stock)
 {
 	int id;
 	std::cout << "Enter pump ID: ";
@@ -261,10 +262,31 @@ void refillPump(std::vector<Pump>& pumps)
 	{
 		if (pumps[i].pumpID == id)
 		{
-			pumps[i].currentLiters = pumps[i].maxCapacity;
-			pumps[i].leak = false;
-			pumps[i].malfunc = false;
-			std::cout << "Pump refilled successfully.\n";
+			// Find stock for this fuel 
+			for (int j = 0; j < stock.size(); j++)
+			{
+				// Check if pump type matches the type in stck 
+				if (pumps[i].fuelType == stock[j].fuelType)
+				{
+					if (stock[j].currentLiters <= 0)
+					{
+						std::cout << "The stock is empty! Refill stock to fill the pump\n";
+						return;
+					}
+
+					// Now we calculate the max fuel that can be filled in the pump
+					int maxFuel = std::min(pumps[i].maxCapacity - pumps[i].currentLiters, stock[j].currentLiters);
+					pumps[i].currentLiters += maxFuel;
+					stock[j].currentLiters -= maxFuel;
+
+					// Save stock to file 
+					saveStockToFile(stock);
+					std::cout << "Pump refilled by " << maxFuel << " liters from the stock.\n";
+					return;
+				}
+			}
+
+			std::cout << "Stock for this fuel not found!\n";
 			return;
 		}
 	}
@@ -494,7 +516,7 @@ void animateTxt(std::string text)
 	std::cout << std::endl;
 }
 // Function to add a new delivery
-void addDelivery(std::vector<Delivery>& deliveries)
+void addDelivery(std::vector<Delivery>& deliveries, std::vector<Expense>& expenses, std::vector<FuelStock>& stock)
 {
 	Delivery d;
 	std::cout << "------------------------\n";
@@ -502,17 +524,63 @@ void addDelivery(std::vector<Delivery>& deliveries)
 	std::cout << "------------------------\n";
 	std::cout << "Enter fuel type: ";
 	std::cin >> d.fuel;
-	std::cout << "Enter delivery date: ";
+	std::cout << "Enter delivery date(DD-MM-YYYY): ";
 	std::cin >> d.date;
 	std::cout << "Enter liters: ";
 	std::cin >> d.litersDelivered;
-	std::cout << "Enter delivery cost: ";
-	std::cin >> d.deliveryCost;
-	deliveries.push_back(d);
 
-	// Saving delivery to file
+	double costPerLiter = 0.0;
+	if (d.fuel == "Petrol")
+		costPerLiter = 120;
+	else if (d.fuel == "Diesel")
+		costPerLiter = 140;
+	else if (d.fuel == "Gas")
+		costPerLiter = 90;
+	else
+	{
+		std::cout << "Invalid Input! Try again\n";
+		return;
+	}
+
+	// Calculate the total delivery cost and storing it
+	d.deliveryCost = d.litersDelivered * costPerLiter;
+	// Update stock
+	bool stockUpdated = false;
+	for (int i = 0; i < stock.size(); i++) 
+	{
+		if (stock[i].fuelType == d.fuel) 
+		{
+			if (stock[i].currentLiters + d.litersDelivered > stock[i].maxCapacity) 
+			{
+				std::cout << "Cannot add delivery. Stock would exceed max capacity!\n";
+				return;
+			}
+			stock[i].currentLiters += d.litersDelivered;
+			stockUpdated = true;
+			break;
+		}
+	}
+
+	if (!stockUpdated) 
+	{
+		std::cout << "No stock found for this fuel type!\n";
+		return;
+	}
+
+	// Sace stock and delivery
+	saveStockToFile(stock); 
+	deliveries.push_back(d);
 	saveDeliveryToFile(d);
-	std::cout << "Delivery added successfully!\n";
+
+	// Record delivery as expense
+	Expense e;
+	e.type = "Delivery";
+	e.amount = d.deliveryCost;
+	e.date = d.date;
+	expenses.push_back(e);
+	saveExpenseToFile(e);
+
+	std::cout << "Delivery succesfully added to stock!\n";
 }
 
 // Function to show all deliveries
@@ -772,20 +840,13 @@ void setDailyExpense(std::vector<Expense>& expenses)
 	e.date = "01-01-2025";
 	e.amount = 500.0;
 
-	// For delivery cost
-	d.type = "Delivery";
-	d.date = "01-01-2025";
-	d.amount = 300.0;
-
 	// Now add them to vector and create new space for next addtion
 	expenses.push_back(s);
 	expenses.push_back(e);
-	expenses.push_back(d);
 
 	// Save the expenses to the file 
 	saveExpenseToFile(e);
 	saveExpenseToFile(s);
-	saveExpenseToFile(d);
 }
 
 // For calculate daily expense

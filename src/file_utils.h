@@ -56,3 +56,10 @@ void savePumpToFile(const Pump& p);
 // Function to load pumps from the file 
 void loadPumpFromFile(std::vector<Pump>& pumps);
 
+// For Stock
+
+// Function to store the stock in the file
+void saveStockToFile(const std::vector<FuelStock>& stock);
+
+// Function to load the stock from the file
+void loadStockFromFile(std::vector<FuelStock>& stock);

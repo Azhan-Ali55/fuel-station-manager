@@ -13,7 +13,7 @@ void animateTxt(std::string text);
 void addPump(std::vector<Pump>& pumps);
 
 // Function to refill pump
-void refillPump(std::vector<Pump>& pumps);
+void refillPump(std::vector<Pump>& pumps, std::vector<FuelStock>& stock);
 
 // Function to repair the pump after a malfunction
 void repairPump(std::vector<Pump>& pumps);
@@ -31,7 +31,7 @@ bool validDate(const std::string& date);
 void makeSale(std::vector<Sale>& sales, std::vector<Pump>& pumps);
 
 // Function to run the program on loop
-void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Fuel>& fuels, std::vector<Sale>& sales, std::vector<Delivery>& deliveries, std::vector<Expense>& expenses, std::vector<Profit>& profits);
+void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Sale>& sales, std::vector<Delivery>& deliveries, std::vector<Expense>& expenses, std::vector<Profit>& profits, std::vector<FuelStock>& stock);
 
 // Function to calculate daily revenue 
 double dailyRevenue(const std::string& date);
@@ -49,7 +49,7 @@ double allRevenue();
 void revenueMenu(const std::vector<Sale>& sales);
 
 // Function to add a new delivery
-void addDelivery(std::vector<Delivery>& deliveries);
+void addDelivery(std::vector<Delivery>& deliveries, std::vector<Expense>& expenses, std::vector<FuelStock>& stock);
 
 // Function to show all deliveries
 void showDeliveries(const std::vector<Delivery>& deliveries);

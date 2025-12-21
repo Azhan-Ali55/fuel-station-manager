@@ -10,6 +10,7 @@ void ensureDataFiles()
     std::ofstream("data/expenses.txt", std::ios::app); // Creates a file expenses.txt inside the data folder if it does not exist
     std::ofstream("data/profit_reports.txt", std::ios::app); // Creates a file profit_reports.txt inside the data folder if it does not exist
     std::ofstream("data/pumps.txt", std::ios::app); // Creates a file pumps.txt inside the data folder if it does not exist
+    std::ofstream file("data/stock.txt");  // Creates a file stock.txt inside the data folder if it does not exist
 }
 
 // For Sales
@@ -188,4 +189,38 @@ void loadPumpFromFile(std::vector<Pump>& pumps)
         pumps.push_back(p);
     }
     file.close();
+}
+
+// For Stock 
+
+void saveStockToFile(const std::vector<FuelStock>& stock)
+{
+    std::ofstream file("data/stock.txt");
+    if (!file)
+    {
+        return;
+    }
+
+    for (int i = 0; i < stock.size(); i++)
+        file << stock[i].fuelType << " " << stock[i].currentLiters << " " << stock[i].maxCapacity << '\n';
+
+    file.close();
+}
+
+void loadStockFromFile(std::vector<FuelStock>& stock)
+{
+    std::ifstream file("data/stock.txt");
+    if (!file) 
+        return;
+
+    FuelStock s;
+    std::vector<FuelStock> tempStock;
+    while (file >> s.fuelType >> s.currentLiters >> s.maxCapacity)
+    {
+        tempStock.push_back(s);
+    }
+    file.close();
+
+    if (!tempStock.empty())
+        stock = tempStock;
 }
