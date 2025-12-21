@@ -1,3 +1,10 @@
+﻿#ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+#endif
+
 #include "file_utils.h"
 #include "fuel_manager.h"
 #include <iostream>
@@ -9,10 +16,124 @@
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
+#include <sstream> 
+#include <cmath>  
+#include <string>  
+
+
+// Helper formatting tools placed in an anonymous namespace to avoid symbol conflicts
+namespace 
+{ 
+
+	// Use ASCII-only names to avoid potential macro/name collisions and encoding issues
+	static const char* ANSI_RESET = "\x1b[0m";  
+	static const char* ANSI_RED = "\x1b[31m"; 
+	static const char* ANSI_GREEN = "\x1b[32m"; 
+	static const char* ANSI_YELLOW = "\x1b[33m"; 
+	static const char* ANSI_BLUE = "\x1b[34m"; 
+	static const char* ANSI_MAGENTA = "\x1b[35m"; 
+	static const char* ANSI_CYAN = "\x1b[36m"; 
+	static const char* ANSI_BOLD = "\x1b[1m";  
+
+	// Enable Windows virtual terminal processing so ANSI codes work on Windows 
+	static void enableVirtualTerminalProcessing() 
+	{
+#ifdef _WIN32
+		HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+		if (hOut != INVALID_HANDLE_VALUE)
+		{
+			DWORD dwMode = 0;
+			if (GetConsoleMode(hOut, &dwMode))
+			{
+				dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+				SetConsoleMode(hOut, dwMode);
+			}
+		}
+#endif
+	}
+
+	// Initialize console colors (currently just enables VT on Windows) 
+	static void initConsoleColors() 
+	{
+		enableVirtualTerminalProcessing(); 
+	}
+
+	// ASCII-only banner to avoid encoding/codepage issues 
+	static void printBanner()
+	{
+		std::cout << ANSI_BLUE << ANSI_BOLD << "====================================================================================\n" << ANSI_RESET;
+		std::cout << ANSI_YELLOW << ANSI_BOLD << "                           FUEL  STATION  MANAGEMENT  SYSTEM\n" << ANSI_RESET;
+		std::cout << ANSI_BLUE << ANSI_BOLD << "====================================================================================\n" << ANSI_RESET;
+		std::cout << "\n";
+	}
+
+	// Small boxed heading for menus 
+	static void printHeading(const std::string& title) 
+	{
+		std::cout << ANSI_BLUE << ANSI_BOLD;
+		std::cout << "========================================\n";
+		std::cout << "              " <<  title << "\n";
+		std::cout << "========================================\n";
+		std::cout << ANSI_RESET;
+	}
+
+	// ASCII-safe percentage bar (width characters) 
+	static void printPercentageBar(double value, double maxValue, int width = 30)
+	{
+		double percent = 0.0;
+		if (maxValue > 0.0) percent = (value / maxValue) * 100.0;
+		int filled = static_cast<int>(std::round((percent / 100.0) * width));
+		std::cout << "[";
+		for (int i = 0; i < width; ++i)
+		{
+			if (i < filled) std::cout << ANSI_GREEN << "=" << ANSI_RESET;
+			else std::cout << " ";
+		}
+		std::cout << "] ";
+		if (percent >= 75.0) std::cout << ANSI_RED;        // high usage in red 
+		else if (percent >= 40.0) std::cout << ANSI_YELLOW; // medium 
+		else std::cout << ANSI_GREEN;                      // low
+		std::cout << std::fixed << std::setprecision(1) << percent << "%" << ANSI_RESET << "\n";
+	}
+
+	// ASCII-only mini graph for revenue/profit visualization
+	static void printMiniGraph(double value, double maxValue, int width = 40) 
+	{
+		double ratio = 0.0;
+		if (maxValue > 0.0) ratio = value / maxValue;
+		if (ratio < 0.0) ratio = 0.0;
+		// Clamp ratio to [0,1] so the bar never overflows -- <------ Made Change here
+		if (ratio > 1.0) ratio = 1.0;
+
+		int len = static_cast<int>(std::round(ratio * width));
+		if (len < 0) len = 0;
+		if (len > width) len = width;
+
+		double percent = ratio * 100.0;
+
+		// Print bar and percentage in-line (ASCII-safe) -- <------ Made Change here
+		std::cout << ANSI_MAGENTA << "["; // filled portion color
+		for (int i = 0; i < len; ++i) std::cout << "#";
+		for (int i = len; i < width; ++i) std::cout << "-";
+		std::cout << "] " << ANSI_RESET;
+
+		// Color the percentage depending on level -- <------ Made Change here
+		if (percent >= 75.0) std::cout << ANSI_RED;
+		else if (percent >= 40.0) std::cout << ANSI_YELLOW;
+		else std::cout << ANSI_GREEN;
+
+		std::cout << std::fixed << std::setprecision(1) << percent << "%" << ANSI_RESET << "\n";
+	}
+
+} // end anonymous namespace
 
 // Function defination for running the program
 void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Sale>& sales, std::vector<Delivery>& deliveries, std::vector<Expense>& expenses, std::vector<Profit>& profits, std::vector<FuelStock>& stock)
 {
+	// Initialize colors and banner
+	initConsoleColors();
+	printBanner(); 
+
 	int choice;
 	Employee loggedUser;
 	bool loggedIn = false;
@@ -29,7 +150,9 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 		// For owner
 		if (loggedUser.role == "Owner")
 		{
-			std::cout << "Enter your choice: \n1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Revenue Report\n6) Expense Report\n7) Profit Report\n8) Pump status\n9) Repair Pump\n10) Log out\n11) Exit\n";
+			printHeading("Owner Menu"); 
+			std::cout << ANSI_CYAN << "Enter your choice: \n" 
+				<< "1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Revenue Report\n6) Expense Report\n7) Profit Report\n8) Pump status\n9) Repair Pump\n10) Log out\n11) Exit\n" << ANSI_RESET;
 			std::cin >> choice;
 			switch (choice)
 			{
@@ -37,7 +160,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 			{
 				addPump(pumps);
 				std::this_thread::sleep_for(std::chrono::seconds(3));
-				std::cout << "The pump was successfully installed!\n";
+				std::cout << ANSI_GREEN << "The pump was successfully installed!\n" << ANSI_RESET; 
 				continue;
 			}
 			case 2:
@@ -86,28 +209,30 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 				loggedIn = false;
 				loggedUser = Employee{};
 				std::this_thread::sleep_for(std::chrono::seconds(2));
-				std::cout << "Logged out successfully!\n";
+				std::cout << ANSI_YELLOW << "Logged out successfully!\n" << ANSI_RESET;
 				continue;
 			}
 			case 11:
 			{
-				std::cout << "Exiting.....";
+				std::cout << ANSI_MAGENTA << "Exiting....." << ANSI_RESET; 
 				std::this_thread::sleep_for(std::chrono::seconds(1));
 				return;
 			}
 			default:
 			{
-				std::cout << "Invalid Input!\n";
+				std::cout << ANSI_RED << "Invalid Input!\n" << ANSI_RESET; 
 				continue;
 			}
-			
+
 			}
 		}
 
 		// For Manager
 		else if (loggedUser.role == "Manager")
 		{
-			std::cout << "Enter your choice: \n1) Add Fuel\n2) Sell\n3) Order Fuel\n4) Expense Report\n5) Pump Status\n6) Repair Pump\n7) Log out\n8) Exit\n";
+			printHeading("Manager Menu");
+			std::cout << ANSI_CYAN << "Enter your choice: \n"
+				<< "1) Add Fuel\n2) Sell\n3) Order Fuel\n4) Expense Report\n5) Pump Status\n6) Repair Pump\n7) Log out\n8) Exit\n" << ANSI_RESET;
 			std::cin >> choice;
 			switch (choice)
 			{
@@ -137,7 +262,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 				pumpsStatus(pumps);
 				continue;
 			}
-			case 6: 
+			case 6:
 			{
 				repairPump(pumps);
 				continue;
@@ -147,18 +272,18 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 				loggedIn = false;
 				loggedUser = Employee{};
 				std::this_thread::sleep_for(std::chrono::seconds(2));
-				std::cout << "Logged out successfully!\n";
+				std::cout << ANSI_YELLOW << "Logged out successfully!\n" << ANSI_RESET;
 				continue;
 			}
 			case 8:
 			{
-				std::cout << "Exiting.....";
+				std::cout << ANSI_MAGENTA << "Exiting....." << ANSI_RESET;
 				std::this_thread::sleep_for(std::chrono::seconds(1));
 				return;
 			}
 			default:
 			{
-				std::cout << "Invalid Input!\n";
+				std::cout << ANSI_RED << "Invalid Input!\n" << ANSI_RESET;
 				continue;
 			}
 
@@ -168,7 +293,9 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 		// For Fueler
 		else
 		{
-			std::cout << "Enter your choice:\n1) Add Fuel\n2) Sell\n3) Repair Pump\n4) Log out\n5) Exit\n";
+			printHeading("Fueler Menu");
+			std::cout << ANSI_CYAN << "Enter your choice:\n"
+				<< "1) Add Fuel\n2) Sell\n3) Repair Pump\n4) Log out\n5) Exit\n" << ANSI_RESET;
 			std::cin >> choice;
 			switch (choice)
 			{
@@ -192,18 +319,18 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 				loggedIn = false;
 				loggedUser = Employee{};
 				std::this_thread::sleep_for(std::chrono::seconds(2));
-				std::cout << "Logged out successfully!\n";
+				std::cout << ANSI_YELLOW << "Logged out successfully!\n" << ANSI_RESET; 
 				continue;
 			}
 			case 5:
 			{
-				std::cout << "Exiting.....";
+				std::cout << ANSI_MAGENTA << "Exiting....." << ANSI_RESET; 
 				std::this_thread::sleep_for(std::chrono::seconds(1));
 				return;
 			}
 			default:
 			{
-				std::cout << "Invalid Input!\n";
+				std::cout << ANSI_RED << "Invalid Input!\n" << ANSI_RESET;
 				continue;
 			}
 
@@ -218,7 +345,7 @@ void addPump(std::vector<Pump>& pumps)
 	// Setting maximum pump limit to 6
 	if (pumps.size() >= 6)
 	{
-		std::cout << "Maximum pumps have been installed!\n";
+		std::cout << ANSI_RED << "Maximum pumps have been installed!\n" << ANSI_RESET; 
 		return;
 	}
 
@@ -231,7 +358,7 @@ void addPump(std::vector<Pump>& pumps)
 	{
 		if (pumps[i].pumpID == p.pumpID)
 		{
-			std::cout << "A pump with this ID is already installed! Try Again\n";
+			std::cout << ANSI_RED << "A pump with this ID is already installed! Try Again\n" << ANSI_RESET; 
 			return;
 		}
 	}
@@ -242,7 +369,7 @@ void addPump(std::vector<Pump>& pumps)
 
 	// Initializing pump information
 	p.maxCapacity = 500;
-	p.currentLiters = 500;    
+	p.currentLiters = 500;
 	p.dispensedLiters = 0;
 	p.malfunc = false;
 	p.leak = false;
@@ -270,28 +397,28 @@ void refillPump(std::vector<Pump>& pumps, std::vector<FuelStock>& stock)
 				{
 					if (stock[j].currentLiters <= 0)
 					{
-						std::cout << "The stock is empty! Refill stock to fill the pump\n";
+						std::cout << ANSI_YELLOW << "The stock is empty! Refill stock to fill the pump\n" << ANSI_RESET;
 						return;
 					}
 
 					// Now we calculate the max fuel that can be filled in the pump
-					int maxFuel = std::min(pumps[i].maxCapacity - pumps[i].currentLiters, stock[j].currentLiters);
+					double maxFuel = std::min(pumps[i].maxCapacity - pumps[i].currentLiters, stock[j].currentLiters);
 					pumps[i].currentLiters += maxFuel;
 					stock[j].currentLiters -= maxFuel;
 
 					// Save stock to file 
 					saveStockToFile(stock);
-					std::cout << "Pump refilled by " << maxFuel << " liters from the stock.\n";
+					std::cout << ANSI_GREEN << "Pump refilled by " << maxFuel << " liters from the stock.\n" << ANSI_RESET;
 					return;
 				}
 			}
 
-			std::cout << "Stock for this fuel not found!\n";
+			std::cout << ANSI_RED << "Stock for this fuel not found!\n" << ANSI_RESET; 
 			return;
 		}
 	}
 
-	std::cout << "Pump not found!\n";
+	std::cout << ANSI_RED << "Pump not found!\n" << ANSI_RESET; 
 }
 
 // Function defination for fixing the pump
@@ -307,18 +434,18 @@ void repairPump(std::vector<Pump>& pumps)
 		{
 			if (!pumps[i].malfunc)
 			{
-				std::cout << "Pump is already operational\n";
+				std::cout << ANSI_GREEN << "Pump is already operational\n" << ANSI_RESET;
 				return;
 			}
 
-			pumps[i].malfunc = true;
+			pumps[i].malfunc = false;
 			pumps[i].leak = false;
-			std::cout << "Pump repaired successfully\n";
+			std::cout << ANSI_GREEN << "Pump repaired successfully\n" << ANSI_RESET; 
 			return;
 		}
 	}
 
-	std::cout << "Invalid pump ID! Try Again\n";
+	std::cout << ANSI_RED << "Invalid pump ID! Try Again\n" << ANSI_RESET; 
 }
 
 // Function defination for viewing pump status
@@ -326,20 +453,30 @@ void pumpsStatus(std::vector<Pump>& pumps)
 {
 	if (pumps.size() == 0)
 	{
-		std::cout << "No pumps have been installed\n";
+		std::cout << ANSI_YELLOW << "No pumps have been installed\n" << ANSI_RESET;
 		return;
 	}
 
-	std::cout << "==================== PUMP STATUS ====================\n";
+	std::cout << ANSI_BOLD << ANSI_BLUE << "==================== PUMP STATUS ====================\n" << ANSI_RESET;
 	for (int i = 0; i < pumps.size(); i++)
 	{
-		std::cout << "Pump ID: " << pumps[i].pumpID << '\n';
-		std::cout << "Fuel Type: " << pumps[i].fuelType << '\n';
-		std::cout << "Current Liters: " << pumps[i].currentLiters << '\n';
-		std::cout << "Total Dispensed Liters: " << pumps[i].dispensedLiters << '\n';
-		std::cout << "Max Capacity: " << pumps[i].maxCapacity << '\n';
-		std::cout << "Malfunction: " << (pumps[i].malfunc ? "Yes" : "No") << '\n';
-		std::cout << "Leak: " << (pumps[i].leak ? "Yes" : "No") << '\n';
+		std::cout << ANSI_CYAN << "Pump ID: " << ANSI_RESET << pumps[i].pumpID << '\n';
+		std::cout << ANSI_CYAN << "Fuel Type: " << ANSI_RESET << pumps[i].fuelType << '\n';
+		std::cout << ANSI_CYAN << "Current Liters: " << ANSI_RESET << pumps[i].currentLiters << " / " << pumps[i].maxCapacity << '\n';
+
+		// Display percentage bar for current liters 
+		printPercentageBar(static_cast<double>(pumps[i].currentLiters), static_cast<double>(pumps[i].maxCapacity));
+
+		std::cout << ANSI_CYAN << "Total Dispensed Liters: " << ANSI_RESET << pumps[i].dispensedLiters << '\n';
+		// Label and mini graph for dispensed proportion
+		std::cout << ANSI_CYAN << "Dispensed: " << ANSI_RESET;
+		printMiniGraph(static_cast<double>(pumps[i].dispensedLiters), static_cast<double>(pumps[i].maxCapacity));
+
+		std::cout << ANSI_CYAN << "Max Capacity: " << ANSI_RESET << pumps[i].maxCapacity << '\n';
+		std::cout << ANSI_CYAN << "Malfunction: " << ANSI_RESET
+			<< (pumps[i].malfunc ? (std::string(ANSI_RED) + "Yes" + ANSI_RESET) : (std::string(ANSI_GREEN) + "No" + ANSI_RESET)) << '\n';
+		std::cout << ANSI_CYAN << "Leak: " << ANSI_RESET
+			<< (pumps[i].leak ? (std::string(ANSI_RED) + "Yes" + ANSI_RESET) : (std::string(ANSI_GREEN) + "No" + ANSI_RESET)) << '\n';
 		std::cout << "-----------------------------------------------------\n";
 	}
 }
@@ -367,17 +504,17 @@ bool login(Employee& loggedUser, const std::vector<Employee>& employee)
 			{
 				loggedUser = employee[i];
 				std::this_thread::sleep_for(std::chrono::seconds(2));
-				std::cout << "\nWelcome " << employee[i].name << '\n';
+				std::cout << "\n" << ANSI_GREEN << "Welcome " << employee[i].name << '\n' << ANSI_RESET;
 				return true;
 			}
 			else
 			{
-				std::cout << "Incorrect password! Try Again\n";
+				std::cout << ANSI_RED << "Incorrect password! Try Again\n" << ANSI_RESET;
 				return false;
 			}
 		}
 	}
-	std::cout << "Incorrect username! Try Again\n";
+	std::cout << ANSI_RED << "Incorrect username! Try Again\n" << ANSI_RESET;
 	return false;
 }
 
@@ -410,20 +547,20 @@ void makeSale(std::vector<Sale>& sales, std::vector<Pump>& pumps)
 
 	if (pumpIndex == -1)
 	{
-		std::cout << "Invalid Pump ID! Try again\n";
+		std::cout << ANSI_RED << "Invalid Pump ID! Try again\n" << ANSI_RESET;
 		return;
 	}
 
 	Pump& pump = pumps[pumpIndex];
 	if (pump.malfunc)
 	{
-		std::cout << "Pump malfunctioned.\n";
+		std::cout << ANSI_RED << "Pump malfunctioned.\n" << ANSI_RESET; 
 		return;
 	}
 
 	if (pump.currentLiters <= 0)
 	{
-		std::cout << "Pump empty.\n";
+		std::cout << ANSI_YELLOW << "Pump empty.\n" << ANSI_RESET; 
 		return;
 	}
 
@@ -434,10 +571,10 @@ void makeSale(std::vector<Sale>& sales, std::vector<Pump>& pumps)
 	std::cin >> s.liters;
 	if (s.liters > pump.currentLiters)
 	{
-		std::cout << "Not enough fuel in the pump! Refill and Try again\n";
+		std::cout << ANSI_RED << "Not enough fuel in the pump! Refill and Try again\n" << ANSI_RESET; 
 		return;
 	}
-	
+
 	if (s.fuel == "Petrol")
 		s.price = 280;
 	else if (s.fuel == "Diesel")
@@ -446,7 +583,7 @@ void makeSale(std::vector<Sale>& sales, std::vector<Pump>& pumps)
 		s.price = 250;
 	else
 	{
-		std::cout << "Invalid Input! Try again\n";
+		std::cout << ANSI_RED << "Invalid Input! Try again\n" << ANSI_RESET; 
 		return;
 	}
 
@@ -467,7 +604,7 @@ void makeSale(std::vector<Sale>& sales, std::vector<Pump>& pumps)
 	if (chance < 5)
 	{
 		pump.malfunc = true;
-		std::cout << "Pump malfunctioned during sale.\n";
+		std::cout << ANSI_RED << "Pump malfunctioned during sale.\n" << ANSI_RESET; 
 		return;
 	}
 	else if (chance < 10)
@@ -475,9 +612,9 @@ void makeSale(std::vector<Sale>& sales, std::vector<Pump>& pumps)
 		pump.leak = true;
 		int leakAmount = rand() % 51 + 5;
 		pump.currentLiters -= leakAmount;
-		if (pump.currentLiters < 0) 
+		if (pump.currentLiters < 0)
 			pump.currentLiters = 0;
-		std::cout << "Leak detected! " << leakAmount << " liters lost\n";
+		std::cout << ANSI_YELLOW << "Leak detected! " << leakAmount << " liters lost\n" << ANSI_RESET;
 	}
 
 	pump.currentLiters -= s.liters;
@@ -493,15 +630,19 @@ void makeSale(std::vector<Sale>& sales, std::vector<Pump>& pumps)
 	saveSaleToFile(s);   // Calling function to save the sale
 
 	// Generating the reciept
-	std::cout << "\n=========== RECEIPT ===========\n";
-	std::cout << "Pump ID: " << s.pumpId << '\n';
-	std::cout << "Fuel: " << s.fuel << '\n';
-	std::cout << "Liters: " << s.liters << '\n';
-	std::cout << "Price/L: " << s.price << '\n';
-	std::cout << "Total: " << s.totalAmount << '\n';
-	std::cout << "Paid by: " << s.payment.method << '\n';
-	std::cout << "Date: " << s.date << '\n';
-	std::cout << "===============================\n";
+	std::cout << "\n" << ANSI_BOLD << ANSI_MAGENTA << "=========== RECEIPT ===========\n" << ANSI_RESET;
+	std::cout << ANSI_CYAN << "Pump ID: " << ANSI_RESET << s.pumpId << '\n';
+	std::cout << ANSI_CYAN << "Fuel: " << ANSI_RESET << s.fuel << '\n';
+	std::cout << ANSI_CYAN << "Liters: " << ANSI_RESET << s.liters << '\n';
+	std::cout << ANSI_CYAN << "Price/L: " << ANSI_RESET << s.price << '\n';
+	std::cout << ANSI_CYAN << "Total: " << ANSI_RESET << s.totalAmount << '\n';
+	std::cout << ANSI_CYAN << "Paid by: " << ANSI_RESET << s.payment.method << '\n';
+	std::cout << ANSI_CYAN << "Date: " << ANSI_RESET << s.date << '\n';
+
+	// Show remaining percentage on pump after sale 
+	std::cout << ANSI_YELLOW << "Pump remaining: " << ANSI_RESET; 
+	printPercentageBar(static_cast<double>(pump.currentLiters), static_cast<double>(pump.maxCapacity)); 
+	std::cout << ANSI_MAGENTA << "===============================\n" << ANSI_RESET; 
 }
 
 // Function  defination for animating text
@@ -538,7 +679,7 @@ void addDelivery(std::vector<Delivery>& deliveries, std::vector<Expense>& expens
 		costPerLiter = 90;
 	else
 	{
-		std::cout << "Invalid Input! Try again\n";
+		std::cout << ANSI_RED << "Invalid Input! Try again\n" << ANSI_RESET; 
 		return;
 	}
 
@@ -546,13 +687,13 @@ void addDelivery(std::vector<Delivery>& deliveries, std::vector<Expense>& expens
 	d.deliveryCost = d.litersDelivered * costPerLiter;
 	// Update stock
 	bool stockUpdated = false;
-	for (int i = 0; i < stock.size(); i++) 
+	for (int i = 0; i < stock.size(); i++)
 	{
-		if (stock[i].fuelType == d.fuel) 
+		if (stock[i].fuelType == d.fuel)
 		{
-			if (stock[i].currentLiters + d.litersDelivered > stock[i].maxCapacity) 
+			if (stock[i].currentLiters + d.litersDelivered > stock[i].maxCapacity)
 			{
-				std::cout << "Cannot add delivery. Stock would exceed max capacity!\n";
+				std::cout << ANSI_RED << "Cannot add delivery. Stock would exceed max capacity!\n" << ANSI_RESET; 
 				return;
 			}
 			stock[i].currentLiters += d.litersDelivered;
@@ -561,14 +702,14 @@ void addDelivery(std::vector<Delivery>& deliveries, std::vector<Expense>& expens
 		}
 	}
 
-	if (!stockUpdated) 
+	if (!stockUpdated)
 	{
-		std::cout << "No stock found for this fuel type!\n";
+		std::cout << ANSI_RED << "No stock found for this fuel type!\n" << ANSI_RESET; 
 		return;
 	}
 
 	// Sace stock and delivery
-	saveStockToFile(stock); 
+	saveStockToFile(stock);
 	deliveries.push_back(d);
 	saveDeliveryToFile(d);
 
@@ -580,7 +721,7 @@ void addDelivery(std::vector<Delivery>& deliveries, std::vector<Expense>& expens
 	expenses.push_back(e);
 	saveExpenseToFile(e);
 
-	std::cout << "Delivery succesfully added to stock!\n";
+	std::cout << ANSI_GREEN << "Delivery succesfully added to stock!\n" << ANSI_RESET;
 }
 
 // Function to show all deliveries
@@ -588,13 +729,13 @@ void showDeliveries(const std::vector<Delivery>& deliveries)
 {
 	if (deliveries.size() == 0)
 	{
-		std::cout << "No deliveries recorded yet.\n";
+		std::cout << ANSI_YELLOW << "No deliveries recorded yet.\n" << ANSI_RESET; 
 		return;
 	}
 	for (int i = 0; i < deliveries.size(); i++)
 	{
 		std::cout << "\n================\n";
-		std::cout << "Delivery Status\n";
+		std::cout << ANSI_BOLD << "Delivery Status\n" << ANSI_RESET;
 		std::cout << "================\n";
 		std::cout << "Delivery " << i + 1 << '\n';
 		std::cout << "Fuel: " << deliveries[i].fuel << '\n';
@@ -608,7 +749,7 @@ void showDeliveries(const std::vector<Delivery>& deliveries)
 double dailyRevenue(const std::string& date)
 {
 	std::ifstream file("data/sales.txt");
-	
+
 	// if file does not exist return 0
 	if (!file)
 	{
@@ -638,7 +779,7 @@ double dailyRevenue(const std::string& date)
 double monthlyRevenue(int month, int year)
 {
 	std::ifstream file("data/sales.txt");
-	
+
 	// if file does not exist return 0
 	if (!file)
 	{
@@ -717,12 +858,10 @@ double allRevenue()
 // Function to display the menu for revenue 
 void revenueMenu(const std::vector<Sale>& sales)
 {
-	std::cout << "===============================\n";
-	std::cout << "              Revenue          \n";
-	std::cout << "===============================\n";
+	printHeading("Revenue"); 
 
 	int choice;
-	std::cout << "1) Daily Revenue\n2) Monthly Revenue\n3) Yearly Revenue\n4) All-Time Revenue\n5) Back\n";
+	std::cout << ANSI_CYAN << "1) Daily Revenue\n2) Monthly Revenue\n3) Yearly Revenue\n4) All-Time Revenue\n5) Back\n" << ANSI_RESET; 
 	std::cin >> choice;
 
 	// Using switch to display revenue 
@@ -733,23 +872,26 @@ void revenueMenu(const std::vector<Sale>& sales)
 		std::string date;
 		std::cout << "Enter date (DD-MM-YYYY): ";
 		std::cin >> date;
-		
+
 		// Validate date
-		if (!validDate(date)) 
+		if (!validDate(date))
 		{
-			std::cout << "Invalid date format!\n";
+			std::cout << ANSI_RED << "Invalid date format!\n" << ANSI_RESET; 
 			return;
 		}
 
 		double revenue = loadRevenueFromFile("daily", date);
 		// If not file then calculate and save
-		if (revenue == 0.0) 
+		if (revenue == 0.0)
 		{
 			revenue = dailyRevenue(date);
 			saveRevenueToFile(revenue, "daily", date);
 		}
 
-		std::cout << "Revenue on " << date << ": " << revenue << "\n";
+		std::cout << ANSI_GREEN << "Revenue on " << date << ": " << revenue << "\n" << ANSI_RESET; 
+		// Visual: mini graph relative to all-time revenue
+		double alltime = allRevenue();
+		printMiniGraph(revenue, alltime == 0.0 ? revenue : alltime); 
 		break;
 	}
 	case 2:
@@ -763,7 +905,7 @@ void revenueMenu(const std::vector<Sale>& sales)
 		// Validate month and year
 		if (month < 1 || month > 12 || year < 2000 || year > 2025)
 		{
-			std::cout << "Invalid month/year!\n";
+			std::cout << ANSI_RED << "Invalid month/year!\n" << ANSI_RESET; 
 			return;
 		}
 
@@ -777,7 +919,10 @@ void revenueMenu(const std::vector<Sale>& sales)
 			revenue = monthlyRevenue(month, year);
 			saveRevenueToFile(revenue, "monthly", identifier);
 		}
-		std::cout << "Revenue for " << month << " in " << year << " is: " << revenue << "\n";
+		std::cout << ANSI_GREEN << "Revenue for month " << month << " in " << year << " is: " << revenue << "\n" << ANSI_RESET; 
+		// Graph:
+		double annual = yearlyRevenue(year);
+		printMiniGraph(revenue, annual == 0.0 ? revenue : annual); 
 		break;
 	}
 	case 3:
@@ -793,19 +938,21 @@ void revenueMenu(const std::vector<Sale>& sales)
 			revenue = yearlyRevenue(year);
 			saveRevenueToFile(revenue, "yearly", identifier);
 		}
-		std::cout << "Revenue for " << year << ": " << revenue << "\n";
+		std::cout << ANSI_GREEN << "Revenue for " << year << ": " << revenue << "\n" << ANSI_RESET; 
+		printMiniGraph(revenue, allRevenue());
 		break;
 	}
 	case 4:
 	{
 		double revenue = loadRevenueFromFile("all-time");
 		// If not file then calculate and save
-		if (revenue == 0.0) 
+		if (revenue == 0.0)
 		{
-			revenue = allRevenue();      
+			revenue = allRevenue();
 			saveRevenueToFile(revenue, "all-time");
 		}
-		std::cout << "All-Time revenue: " << revenue << "\n";
+		std::cout << ANSI_GREEN << "All-Time revenue: " << revenue << "\n" << ANSI_RESET; 
+		printMiniGraph(revenue, revenue); 
 		break;
 	}
 	case 5:
@@ -814,7 +961,7 @@ void revenueMenu(const std::vector<Sale>& sales)
 	}
 	default:
 	{
-		std::cout << "Invalid Input!";
+		std::cout << ANSI_RED << "Invalid Input!" << ANSI_RESET; 
 	}
 
 	}
@@ -931,31 +1078,29 @@ double totalExpense()
 // Function to display the expense menu 
 void expensesMenu(std::vector<Expense>& expenses)
 {
-	std::cout << "===============================\n";
-	std::cout << "            Expenses           \n";
-	std::cout << "===============================\n";
+	printHeading("Expenses"); 
 
 	int choice;
-	std::cout << "1) View daily expenses\n2) View monthly expenses\n3) View yearly expenses\n4) View all time expenses\n5) Back\n";
+	std::cout << ANSI_CYAN << "1) View daily expenses\n2) View monthly expenses\n3) View yearly expenses\n4) View all time expenses\n5) Back\n" << ANSI_RESET; 
 	std::cin >> choice;
 
 	switch (choice)
 	{
-	case 1: 
+	case 1:
 	{
 		std::string date;
 		std::cout << "Enter date(DD-MM-YYYY): ";
 		std::cin >> date;
 		if (!validDate(date))
 		{
-			std::cout << "Invalid date format!\n";
+			std::cout << ANSI_RED << "Invalid date format!\n" << ANSI_RESET; 
 			break;
 		}
 
-		std::cout << "Expense for " << date << " is: " << dailyExpense(date) << '\n';
+		std::cout << ANSI_GREEN << "Expense for " << date << " is: " << dailyExpense(date) << '\n' << ANSI_RESET;
 		break;
 	}
-	case 2: 
+	case 2:
 	{
 		int month;
 		int year;
@@ -968,14 +1113,14 @@ void expensesMenu(std::vector<Expense>& expenses)
 		// Check if month and year is valid
 		if (month < 0 || month > 12 || year < 2000 || year > 2025)
 		{
-			std::cout << "Invalid month/year! Try again\n";
+			std::cout << ANSI_RED << "Invalid month/year! Try again\n" << ANSI_RESET; 
 			break;
 		}
 
-		std::cout << "Expenses: " << monthlyExpense(month, year) << '\n';
+		std::cout << ANSI_GREEN << "Expenses: " << monthlyExpense(month, year) << '\n' << ANSI_RESET;
 		break;
 	}
-	case 3: 
+	case 3:
 	{
 		int year;
 		std::cout << "Enter year: ";
@@ -984,24 +1129,24 @@ void expensesMenu(std::vector<Expense>& expenses)
 		// Check if the year is valid
 		if (year < 2000 || year > 2025)
 		{
-			std::cout << "Invalid year! Try again\n";
+			std::cout << ANSI_RED << "Invalid year! Try again\n" << ANSI_RESET; 
 			break;
 		}
-		std::cout << "Expenses: " << yearlyExpense(year) << '\n';
+		std::cout << ANSI_GREEN << "Expenses: " << yearlyExpense(year) << '\n' << ANSI_RESET; 
 		break;
 	}
-	case 4: 
+	case 4:
 	{
-		std::cout << "Expenses: " << totalExpense() << '\n';
+		std::cout << ANSI_GREEN << "Expenses: " << totalExpense() << '\n' << ANSI_RESET; 
 		break;
 	}
 	case 5:
 	{
 		return;
 	}
-	default: 
+	default:
 	{
-		std::cout << "Invalid input! Try again\n";
+		std::cout << ANSI_RED << "Invalid input! Try again\n" << ANSI_RESET; 
 		break;
 	}
 
@@ -1067,31 +1212,29 @@ double totalProfit()
 // Function to display the profit menu 
 void profitMenu(std::vector<Profit>& profits)
 {
-	std::cout << "===============================\n";
-	std::cout << "              Profit            \n";
-	std::cout << "===============================\n";
+	printHeading("Profit");
 
 	int choice;
-	std::cout << "1) View daily profit\n2) View monthly profit\n3) View yearly profit\n4) View all time profit\n5) Back\n";
+	std::cout << ANSI_CYAN << "1) View daily profit\n2) View monthly profit\n3) View yearly profit\n4) View all time profit\n5) Back\n" << ANSI_RESET; 
 	std::cin >> choice;
 
 	switch (choice)
 	{
-	case 1: 
+	case 1:
 	{
 		std::string date;
 		std::cout << "Enter date(DD-MM-YYYY): ";
 		std::cin >> date;
 		if (!validDate(date))
 		{
-			std::cout << "Invalid date format!\n";
+			std::cout << ANSI_RED << "Invalid date format!\n" << ANSI_RESET; 
 			break;
 		}
 
-		std::cout << "Profit on " << date << " is: " << dailyProfit(date) << '\n';
+		std::cout << ANSI_GREEN << "Profit on " << date << " is: " << dailyProfit(date) << '\n' << ANSI_RESET; 
 		break;
 	}
-	case 2: 
+	case 2:
 	{
 		int month;
 		int year;
@@ -1104,11 +1247,11 @@ void profitMenu(std::vector<Profit>& profits)
 		// Check if month and year is valid
 		if (month < 0 || month > 12 || year < 2000 || year > 2025)
 		{
-			std::cout << "Invalid month/year! Try again\n";
+			std::cout << ANSI_RED << "Invalid month/year! Try again\n" << ANSI_RESET; 
 			break;
 		}
 
-		std::cout << "Profit: " << monthlyProfit(month, year) << '\n';
+		std::cout << ANSI_GREEN << "Profit: " << monthlyProfit(month, year) << '\n' << ANSI_RESET; 
 		break;
 	}
 	case 3:
@@ -1120,16 +1263,16 @@ void profitMenu(std::vector<Profit>& profits)
 		// Check if the year is valid
 		if (year < 2000 || year > 2025)
 		{
-			std::cout << "Invalid year! Try again\n";
+			std::cout << ANSI_RED << "Invalid year! Try again\n" << ANSI_RESET; 
 			break;
 		}
 
-		std::cout << "Profit: " << yearlyProfit(year) << '\n';
+		std::cout << ANSI_GREEN << "Profit: " << yearlyProfit(year) << '\n' << ANSI_RESET; 
 		break;
 	}
 	case 4:
 	{
-		std::cout << "Total Profit: " << totalProfit() << '\n';
+		std::cout << ANSI_GREEN << "Total Profit: " << totalProfit() << '\n' << ANSI_RESET; 
 		break;
 	}
 	case 5:
@@ -1138,11 +1281,10 @@ void profitMenu(std::vector<Profit>& profits)
 	}
 	default:
 	{
-		std::cout << "Invalid Input! Try again";
+		std::cout << ANSI_RED << "Invalid Input! Try again" << ANSI_RESET; 
 		break;
 	}
 
 	}
 
 }
-

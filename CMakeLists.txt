@@ -17,7 +17,7 @@ set(FOLDERS "") # list
 foreach(item IN LISTS FILES_FOLDERS)
     # only include cpp and hpp files in files list
     string(REGEX MATCH "\\.cpp$" isCPPFile "${item}")
-    string(REGEX MATCH "\\.hpp$" isHPPFile "${item}")
+    string(REGEX MATCH "\\.h$" isHPPFile "${item}")
     if(IS_DIRECTORY "${item}")
         list(APPEND FOLDERS "${item}")
     elseif(isCPPFile)
