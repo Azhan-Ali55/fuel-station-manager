@@ -102,7 +102,7 @@ namespace
 		double ratio = 0.0;
 		if (maxValue > 0.0) ratio = value / maxValue;
 		if (ratio < 0.0) ratio = 0.0;
-		// Clamp ratio to [0,1] so the bar never overflows -- <------ Made Change here
+		// Clamp ratio to [0,1] so the bar never overflows 
 		if (ratio > 1.0) ratio = 1.0;
 
 		int len = static_cast<int>(std::round(ratio * width));
@@ -111,13 +111,13 @@ namespace
 
 		double percent = ratio * 100.0;
 
-		// Print bar and percentage in-line (ASCII-safe) -- <------ Made Change here
+		// Print bar and percentage in-line (ASCII-safe) 
 		std::cout << ANSI_MAGENTA << "["; // filled portion color
 		for (int i = 0; i < len; ++i) std::cout << "#";
 		for (int i = len; i < width; ++i) std::cout << "-";
 		std::cout << "] " << ANSI_RESET;
 
-		// Color the percentage depending on level -- <------ Made Change here
+		// Color the percentage depending on level
 		if (percent >= 75.0) std::cout << ANSI_RED;
 		else if (percent >= 40.0) std::cout << ANSI_YELLOW;
 		else std::cout << ANSI_GREEN;
@@ -599,7 +599,6 @@ void makeSale(std::vector<Sale>& sales, std::vector<Pump>& pumps)
 	s.date = oss.str();
 
 	// Random malfunction and leakage chnace
-	srand(time(0));
 	int chance = rand() % 100;
 	if (chance < 5)
 	{
@@ -708,7 +707,7 @@ void addDelivery(std::vector<Delivery>& deliveries, std::vector<Expense>& expens
 		return;
 	}
 
-	// Sace stock and delivery
+	// Save stock and delivery
 	saveStockToFile(stock);
 	deliveries.push_back(d);
 	saveDeliveryToFile(d);

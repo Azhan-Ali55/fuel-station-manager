@@ -6,6 +6,7 @@
 #include <chrono>
 #include <thread>
 #include <iomanip>
+#include <ctime>
 
 
 int main()
@@ -66,9 +67,9 @@ int main()
 	// Loading stock from the file
 	loadStockFromFile(stock);
 	
-	// Declaring the revenue variable
-	double revenue = 0;
-	
+	// Seeding random number generator
+	std::srand(static_cast<unsigned>(std::time(nullptr)));
+
 	// Running the program 
 	runProgram(employees, pumps, sales, deliveries, expenses, profits, stock);
 	return 0;
