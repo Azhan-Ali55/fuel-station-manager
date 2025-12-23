@@ -13,8 +13,8 @@ Fuel stations often face problems due to manual handling and lack of proper syst
 
 - No role-based access system  
 - Manual record keeping that causes errors  
-- Difficulty in managing staff duties  
-- Unclear workflow of daily operations  
+- To Avoid Frauds by Managers etc
+- To keep track of Stock,Revenue Digitaly by Simple Steps  
 
 This program was created to solve these issues by:
 
