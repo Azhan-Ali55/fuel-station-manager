@@ -386,7 +386,7 @@ void addPump(std::vector<Pump>& pumps)
 	std::this_thread::sleep_for(std::chrono::seconds(3));
 	std::cout << ANSI_GREEN << "The pump was successfully installed!\n" << ANSI_RESET;
 	pumps.push_back(p); // Adds a new pump to the vector 
-	savePumpToFile(p);
+	savePumpToFile(pumps);
 }
 
 // Function defination for refilling the pump
@@ -428,8 +428,9 @@ void refillPump(std::vector<Pump>& pumps, std::vector<FuelStock>& stock)
 						std::cout << ANSI_GREEN << "Pump is already full!\n" << ANSI_RESET;
 						return;
 					}
-					// Save stock to file 
+					// Save pump and stock to file 
 					saveStockToFile(stock);
+					savePumpToFile(pumps);
 					std::cout << ANSI_GREEN << "Pump refilled by " << maxFuel << " liters from the stock.\n" << ANSI_RESET;
 					return;
 				}
@@ -462,6 +463,7 @@ void repairPump(std::vector<Pump>& pumps)
 
 			pumps[i].malfunc = false;
 			pumps[i].leak = false;
+			savePumpToFile(pumps);
 			std::cout << ANSI_GREEN << "Pump repaired successfully\n" << ANSI_RESET; 
 			return;
 		}
@@ -640,6 +642,8 @@ void makeSale(std::vector<Sale>& sales, std::vector<Pump>& pumps)
 
 	pump.currentLiters -= s.liters;
 	pump.dispensedLiters += s.liters;
+	savePumpToFile(pumps); // Calling function to save the pump
+
 	// Calculating total
 	s.totalAmount = s.price * s.liters;
 

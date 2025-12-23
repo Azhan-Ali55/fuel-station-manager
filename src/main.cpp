@@ -40,11 +40,11 @@ int main()
 	};
 
 	// Declaring a vector for storing stock 
-	std::vector<FuelStock> stock = 
+	std::vector<FuelStock> stock =
 	{
-		{"Petrol", 0, 1500}, 
-		{"Diesel", 0, 500},   
-		{"Gas", 0, 1000}      
+		{"Petrol", 0, 1500},
+		{"Diesel", 0, 500},
+		{"Gas", 0, 1000}
 	};
 
 	// Loading sales from the file 

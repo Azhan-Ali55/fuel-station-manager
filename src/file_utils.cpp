@@ -161,16 +161,13 @@ void loadProfitFromFile(std::vector<Profit>& reports)
 
 // For Pumps
 
-void savePumpToFile(const Pump& p)
+void savePumpToFile(const std::vector<Pump>& pumps)
 {
-    std::ofstream file("data/pumps.txt", std::ios::app);
-
-    if (!file)
+    std::ofstream file("data/pumps.txt"); 
+    for (int i = 0; i < pumps.size(); i++) 
     {
-        return;
+        file << pumps[i].pumpID << " " << pumps[i].fuelType << " " << pumps[i].maxCapacity << " " << pumps[i].currentLiters << " " << pumps[i].dispensedLiters << " " << pumps[i].malfunc << " " << pumps[i].leak << "\n";
     }
-
-    file << p.pumpID << " " << p.fuelType << " " << p.maxCapacity << " " << p.currentLiters << " " << p.dispensedLiters << " " << p.malfunc << " " << p.leak << '\n';
     file.close();
 }
 
