@@ -10,7 +10,7 @@ void ensureDataFiles()
     std::ofstream("data/expenses.txt", std::ios::app); // Creates a file expenses.txt inside the data folder if it does not exist
     std::ofstream("data/profit_reports.txt", std::ios::app); // Creates a file profit_reports.txt inside the data folder if it does not exist
     std::ofstream("data/pumps.txt", std::ios::app); // Creates a file pumps.txt inside the data folder if it does not exist
-    std::ofstream file("data/stock.txt");  // Creates a file stock.txt inside the data folder if it does not exist
+    std::ofstream("data/stock.txt", std::ios::app);  // Creates a file stock.txt inside the data folder if it does not exist
 }
 
 // For Sales
@@ -219,8 +219,9 @@ void loadStockFromFile(std::vector<FuelStock>& stock)
     {
         tempStock.push_back(s);
     }
-    file.close();
-
+    //file.close();
+   
     if (!tempStock.empty())
         stock = tempStock;
+    file.close();
 }

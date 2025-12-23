@@ -52,17 +52,29 @@ namespace
 #endif
 	}
 
-	// Initialize console colors (currently just enables VT on Windows) 
+	// Initialize console colors
 	static void initConsoleColors() 
 	{
 		enableVirtualTerminalProcessing(); 
 	}
 
-	// ASCII-only banner to avoid encoding/codepage issues 
+	// Prinitng the banner at the start of the program 
 	static void printBanner()
 	{
 		std::cout << ANSI_BLUE << ANSI_BOLD << "====================================================================================\n" << ANSI_RESET;
-		std::cout << ANSI_YELLOW << ANSI_BOLD << "                           FUEL  STATION  MANAGEMENT  SYSTEM\n" << ANSI_RESET;
+		std::cout << ANSI_YELLOW << ANSI_BOLD << "\n";
+		std::cout << "    ______  __  __  ______  __         _____ _______ ___  ______ ____  ____  _   __\n";
+		std::cout << "   / ____/ / / / / / ____/ / /        / ___//_  __//   |/_  __//  _/ / __ \\\\/ | / /\n";
+		std::cout << "  / /_    / / / / / __/   / /         \\\\__ \\\\  / /  / /| | / /   / /  / / / /  |/ /\n";
+		std::cout << " / __/   / /_/ / / /___  / /___      ___/ / / /  / ___ |/ /  _/ /  / /_/ / /|  /\n";
+		std::cout << "/_/      \\\\____/ /_____/ /_____/  /____/ /_/  /_/  |_/_/  /___/  \\\\____/_/ |_/\n";
+		std::cout << "\n" << ANSI_RESET;
+		std::cout << ANSI_BLUE << ANSI_BOLD << "====================================================================================\n" << ANSI_RESET;
+		std::cout << "\n";
+		std::cout << ANSI_BLUE << ANSI_BOLD << "====================================================================================\n" << ANSI_RESET;
+		std::cout << ANSI_YELLOW << ANSI_BOLD;
+		animateTxt("                           FUEL  STATION  MANAGEMENT  SYSTEM");
+		std::cout << ANSI_RESET;
 		std::cout << ANSI_BLUE << ANSI_BOLD << "====================================================================================\n" << ANSI_RESET;
 		std::cout << "\n";
 	}
@@ -77,7 +89,7 @@ namespace
 		std::cout << ANSI_RESET;
 	}
 
-	// ASCII-safe percentage bar (width characters) 
+	// Percentage bar
 	static void printPercentageBar(double value, double maxValue, int width = 30)
 	{
 		double percent = 0.0;
@@ -96,7 +108,7 @@ namespace
 		std::cout << std::fixed << std::setprecision(1) << percent << "%" << ANSI_RESET << "\n";
 	}
 
-	// ASCII-only mini graph for revenue/profit visualization
+	// ASCII mini graph for revenue/profit visualization
 	static void printMiniGraph(double value, double maxValue, int width = 40) 
 	{
 		double ratio = 0.0;
@@ -111,7 +123,7 @@ namespace
 
 		double percent = ratio * 100.0;
 
-		// Print bar and percentage in-line (ASCII-safe) 
+		// Print bar and percentage in-line
 		std::cout << ANSI_MAGENTA << "["; // filled portion color
 		for (int i = 0; i < len; ++i) std::cout << "#";
 		for (int i = len; i < width; ++i) std::cout << "-";
@@ -125,7 +137,7 @@ namespace
 		std::cout << std::fixed << std::setprecision(1) << percent << "%" << ANSI_RESET << "\n";
 	}
 
-} // end anonymous namespace
+} 
 
 // Function defination for running the program
 void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std::vector<Sale>& sales, std::vector<Delivery>& deliveries, std::vector<Expense>& expenses, std::vector<Profit>& profits, std::vector<FuelStock>& stock)
@@ -152,15 +164,13 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 		{
 			printHeading("Owner Menu"); 
 			std::cout << ANSI_CYAN << "Enter your choice: \n" 
-				<< "1) Add Pump\n2) Add Fuel\n3) Sell\n4) Order Fuel\n5) Revenue Report\n6) Expense Report\n7) Profit Report\n8) Pump status\n9) Repair Pump\n10) Log out\n11) Exit\n" << ANSI_RESET;
+				<< "1) Add Pump\n2) Refill Pump\n3) Sell\n4) Order Fuel\n5) Revenue Report\n6) Expense Report\n7) Profit Report\n8) Pump status\n9) Repair Pump\n10) Log out\n11) Exit\n" << ANSI_RESET;
 			std::cin >> choice;
 			switch (choice)
 			{
 			case 1:
 			{
-				addPump(pumps);
-				std::this_thread::sleep_for(std::chrono::seconds(3));
-				std::cout << ANSI_GREEN << "The pump was successfully installed!\n" << ANSI_RESET; 
+				addPump(pumps); 
 				continue;
 			}
 			case 2:
@@ -232,7 +242,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 		{
 			printHeading("Manager Menu");
 			std::cout << ANSI_CYAN << "Enter your choice: \n"
-				<< "1) Add Fuel\n2) Sell\n3) Order Fuel\n4) Expense Report\n5) Pump Status\n6) Repair Pump\n7) Log out\n8) Exit\n" << ANSI_RESET;
+				<< "1) Refill Pump\n2) Sell\n3) Order Fuel\n4) Expense Report\n5) Pump Status\n6) Repair Pump\n7) Log out\n8) Exit\n" << ANSI_RESET;
 			std::cin >> choice;
 			switch (choice)
 			{
@@ -295,7 +305,7 @@ void runProgram(std::vector<Employee>& employees, std::vector<Pump>& pumps, std:
 		{
 			printHeading("Fueler Menu");
 			std::cout << ANSI_CYAN << "Enter your choice:\n"
-				<< "1) Add Fuel\n2) Sell\n3) Repair Pump\n4) Log out\n5) Exit\n" << ANSI_RESET;
+				<< "1) Refill Pump\n2) Sell\n3) Repair Pump\n4) Log out\n5) Exit\n" << ANSI_RESET;
 			std::cin >> choice;
 			switch (choice)
 			{
@@ -373,6 +383,8 @@ void addPump(std::vector<Pump>& pumps)
 	p.dispensedLiters = 0;
 	p.malfunc = false;
 	p.leak = false;
+	std::this_thread::sleep_for(std::chrono::seconds(3));
+	std::cout << ANSI_GREEN << "The pump was successfully installed!\n" << ANSI_RESET;
 	pumps.push_back(p); // Adds a new pump to the vector 
 	savePumpToFile(p);
 }
@@ -405,7 +417,17 @@ void refillPump(std::vector<Pump>& pumps, std::vector<FuelStock>& stock)
 					double maxFuel = std::min(pumps[i].maxCapacity - pumps[i].currentLiters, stock[j].currentLiters);
 					pumps[i].currentLiters += maxFuel;
 					stock[j].currentLiters -= maxFuel;
-
+					if (maxFuel == 0)
+					{
+						std::cout << ANSI_GREEN << "Pump is already full!\n" << ANSI_RESET;
+						return;
+					}
+					if (maxFuel <= 0)
+					{
+						maxFuel = 0;
+						std::cout << ANSI_GREEN << "Pump is already full!\n" << ANSI_RESET;
+						return;
+					}
 					// Save stock to file 
 					saveStockToFile(stock);
 					std::cout << ANSI_GREEN << "Pump refilled by " << maxFuel << " liters from the stock.\n" << ANSI_RESET;
@@ -655,6 +677,7 @@ void animateTxt(std::string text)
 	}
 	std::cout << std::endl;
 }
+
 // Function to add a new delivery
 void addDelivery(std::vector<Delivery>& deliveries, std::vector<Expense>& expenses, std::vector<FuelStock>& stock)
 {
@@ -837,8 +860,10 @@ double yearlyRevenue(int year)
 double allRevenue()
 {
 	std::ifstream file("data/sales.txt");
-	if (!file) return 0.0;
-
+	if (!file)
+	{
+		return 0.0;
+	}
 	double revenue = 0.0;
 	std::string line;
 	while (std::getline(file, line))

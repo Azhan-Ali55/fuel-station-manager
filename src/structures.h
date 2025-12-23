@@ -19,13 +19,13 @@ struct Payment
 // Stores the information about purchased fuel
 struct Sale
 {
-    std::string fuel;
-    std::string date;
-    int pumpId;
-    double liters;
-    double price;
-    double totalAmount;
-    Payment payment;
+    std::string fuel{};
+    std::string date{};
+    int pumpId{ 0 };
+    double liters{ 0.0 };
+    double price{ 0.0 };
+    double totalAmount{ 0.0 };
+    Payment payment{};
 };
 
 // Stores the information about employees
