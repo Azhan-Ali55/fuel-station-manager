@@ -1,125 +1,88 @@
-# fuel-station-manager
-<h1 align="center">Fuel Management System</h1>
+# Fuel Management System
 
-<hr>
+## Overview
+The **Fuel Management System** is a console-based C++ application developed to manage the basic operations of a fuel station.  
+It uses a **role-based login system** where each user has a specific role and responsibilities.
 
-<h2>📌 Overview</h2>
-<p>
-The <strong>Fuel Management System</strong> is a console-based C++ application designed to manage
-the operations of a fuel station using a <strong>role-based login system</strong>.
-The system simulates real-world fuel station roles including <strong>Owner</strong>,
-<strong>Manager</strong>, and <strong>Fueler (Employee)</strong>.
-</p>
+The system is designed to make fuel station management more organized, secure, and efficient by separating access for the **Owner**, **Manager**, and **Fueler (Employee)**.
 
-<p>
-Each role has predefined access and responsibilities, ensuring proper control,
-better organization, and efficient management of fuel station activities.
-</p>
+---
 
-<hr>
+## Why This Program Was Developed
+Fuel stations often face problems due to manual handling and lack of proper system control, such as:
 
-<h2>❓ Why This Program Was Developed</h2>
-<p>
-Fuel stations often face operational issues due to manual processes and lack of
-structured control. Common problems include:
-</p>
+- No role-based access system  
+- Manual record keeping that causes errors  
+- Difficulty in managing staff duties  
+- Unclear workflow of daily operations  
 
-<ul>
-  <li>No proper role-based access control</li>
-  <li>Manual record keeping leading to errors</li>
-  <li>Difficulty in managing staff responsibilities</li>
-  <li>Poor organization of daily operations</li>
-</ul>
+This program was created to solve these issues by:
 
-<p>
-This project was developed to overcome these problems by:
-</p>
+- Automating fuel station operations  
+- Providing secure login for different roles  
+- Defining a clear program flow  
+- Improving efficiency and accountability  
 
-<ul>
-  <li>Automating fuel station operations</li>
-  <li>Implementing secure role-based login</li>
-  <li>Defining a clear program workflow</li>
-  <li>Improving efficiency and accountability</li>
-</ul>
+---
 
-<hr>
+## Instructions For Running The Program 
 
-<h2>▶ Instructions For Running The Program</h2>
+- ### Prerequisites
 
-<h3>🔧 Prerequisites</h3>
-<ol>
-  <li><strong>CMake</strong> – Must be available in CLI</li>
-  <li><strong>C++ Compiler linked with CMake</strong> – Must be available in CLI</li>
-  <li><strong>Visual Studio</strong> – Required for Windows</li>
-</ol>
+  1. *CMake*; Should be available in CLI
+  2. *C++ compiler linked with CMake*; Should be availabe in CLI
+  3. *Visual Studio*; For windows
 
-<hr>
+- ### MacOS
 
-<h3>🍎 macOS</h3>
-<ol>
-  <li>Run <code>./setup.sh</code></li>
-  <li>Follow the instructions given in the script</li>
-  <li>Run <code>./run.sh</code> in the terminal
-    <ul>
-      <li>The script will generate CMake files and automatically run the program</li>
-    </ul>
-  </li>
-</ol>
+1. Run ./setup.sh
+2. Follow instructions given in script
+3. Run ./run.sh in terminal
+   - The script will generate CMake files, and run the file by itself automatically.
 
-<hr>
+- ### Windows
 
-<h3>🪟 Windows</h3>
-<ol>
-  <li>Open the <code>src</code> folder in <strong>Visual Studio</strong></li>
-  <li>Run <code>main.cpp</code></li>
-</ol>
+1. Open the src folder in Visual Studio and run main.cpp
 
-<hr>
+---
 
-<h2>🔄 Program Flow</h2>
+## Program Flow
 
-<h3>🔐 Login Roles</h3>
-<ul>
-  <li>Owner</li>
-  <li>Manager</li>
-  <li>Fueler (Employee)</li>
-</ul>
+### Login Roles
+The system supports the following roles:
 
-<h3>👤 Login Credentials</h3>
+- Owner
+- Manager
+- Fueler (Employee)
 
-<h4>Owner</h4>
-<ul>
-  <li><strong>Username:</strong> andrew123</li>
-  <li><strong>Password:</strong> own1</li>
-</ul>
+---
 
-<h4>Fueler (Employee)</h4>
-<ul>
-  <li><strong>Username:</strong> alex123 &nbsp; | &nbsp; <strong>Password:</strong> emp1</li>
-  <li><strong>Username:</strong> umer123 &nbsp; | &nbsp; <strong>Password:</strong> emp2</li>
-</ul>
+### Login Credentials
 
-<h4>Manager</h4>
-<ul>
-  <li><strong>Username:</strong> ali123</li>
-  <li><strong>Password:</strong> man1</li>
-</ul>
+#### Owner
+- **Username:** andrew123  
+- **Password:** own1  
 
-<hr>
+#### Fueler (Employee)
+- **Username:** alex123  
+**Password:** emp1  
 
-<h2>📄 Additional Documentation</h2>
-<p>
-The complete program flow and detailed working of the system
-are explained in the accompanying <strong>Word Document</strong>.
-</p>
+- **Username:** umer123  
+**Password:** emp2  
 
-<p>
-Please refer to that document for a deeper understanding of system logic,
-features, and implementation details.
-</p>
+#### Manager
+- **Username:** ali123  
+- **Password:** man1  
 
-<hr>
+---
 
-<p align="center">
-<strong>Fuel Management System – C++ Project</strong>
-</p>
+## Future Improvements
+- GUI
+- Physical Integration with Pumps
+- Use SQL for Greater Database 
+- Can Update for Digital Salary System
+
+## Additional Documentation
+The complete program flow and detailed working of the system are explained in the **Word Document** provided with this project.
+
+Please refer to that document for a deeper understanding of the logic and implementation.
