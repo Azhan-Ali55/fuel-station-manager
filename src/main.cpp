@@ -14,9 +14,6 @@ int main()
 	// Ensuring data files
 	ensureDataFiles();  
 	
-	// Declaring a vector for storing fuels
-	std::vector<Fuel> fuels;
-	
 	// Declaring a vector for storing pumps
 	std::vector<Pump> pumps;
 	
@@ -33,6 +30,7 @@ int main()
 	std::vector<Profit> profits;
 	
 	// Declaring a vector for storing employee's information
+	// These username and passwords are hardcoded and will be used to login into the system 
 	std::vector<Employee> employees =
 	{
 		{"Alex", "alex123", "emp1", "Fueler"},

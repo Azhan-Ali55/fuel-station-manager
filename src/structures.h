@@ -2,14 +2,6 @@
 
 #include <string>
 
-// Stores the fuel name, price, and quantity
-struct Fuel 
-{
-    std::string name;
-    double price;
-    double liters;
-};
-
 // Stores information about payment methods
 struct Payment
 {
@@ -19,13 +11,13 @@ struct Payment
 // Stores the information about purchased fuel
 struct Sale
 {
-    std::string fuel{};
-    std::string date{};
-    int pumpId{ 0 };
-    double liters{ 0.0 };
-    double price{ 0.0 };
-    double totalAmount{ 0.0 };
-    Payment payment{};
+    std::string fuel;
+    std::string date;
+    int pumpId;
+    double liters;
+    double price;
+    double totalAmount;
+    Payment payment;
 };
 
 // Stores the information about employees
